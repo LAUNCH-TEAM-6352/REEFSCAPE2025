@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 /** An example command that uses an example subsystem. */
 public class ExampleCommand extends Command
 {
-    @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-    private final ExampleSubsystem m_subsystem;
+    @SuppressWarnings("unused")
+    private final ExampleSubsystem exampleSubsystem;
 
     /**
      * Creates a new ExampleCommand.
@@ -21,7 +21,7 @@ public class ExampleCommand extends Command
      */
     public ExampleCommand(ExampleSubsystem subsystem)
     {
-        m_subsystem = subsystem;
+        exampleSubsystem = subsystem;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(subsystem);
     }
