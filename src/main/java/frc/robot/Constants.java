@@ -19,4 +19,13 @@ public final class Constants
     {
         public static final int kDriverControllerPort = 0;
     }
+
+
+    public static final class LimelightConstants
+    {
+        // need to be updated based on measurements
+        public static final double CAMERA_HEIGHT_METERS = 0; 
+        public static final double TARGET_HEIGHT_METERS = 2; 
+        public static final double CAMERA_PITCH_RADIANS = Math.toRadians(0);
+    }
 }
