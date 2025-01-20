@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.config.PIDConstants;
+
+import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -15,8 +19,47 @@ package frc.robot;
  */
 public final class Constants
 {
+
+    public static class DriveConstants
+    {
+        public static final TelemetryVerbosity swerveDriveTelemetryVerbosity = TelemetryVerbosity.HIGH;
+    }
+
+    //TODO: Confirm values
     public static class OperatorConstants
     {
-        public static final int kDriverControllerPort = 0;
+        public static final int driverGamepadPort = 1;
+        public static final int codriverGamepadPort = 2;
+        public static final double gamepadDeadband = 0.05;
+
     }
+    //TODO: Confirm values
+    public static final class PathPlannerConstants
+    {
+        public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
+        public static final PIDConstants ANGLE_PID = new PIDConstants(0.4, 0, 0.01);
+    }
+
+
+    //TODO: Confirm values
+    public static final class SwerveConstants
+    {
+        public static final double maximumLinearVelocityMps = 10.0;
+        public static final double maximumRotationRateRps = 4 * Math.PI;
+
+        // Don't mess with this!
+        public static final double maxModuleSpeedMps = 4.57;
+    }
+
+    public static class TestConstants
+    {
+        public static final double inbetweenTimeSecs = 1;
+
+        public static final double swerveModuleMotorTimeoutSecs = 5;
+        public static final double swerveModuleDriveForwardPercentOutput = 0.25;
+        public static final double swerveModuleDriveReversePercentOutput = -0.25;
+        public static final double swerveModuleAngleCcwPercentOutput = 0.25;
+        public static final double swerveModuleAngleCwPercentOutput = -0.25;
+    }
+
 }
