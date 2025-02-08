@@ -4,7 +4,10 @@
 
 package frc.robot;
 
+import java.util.Enumeration;
+
 import com.pathplanner.lib.config.PIDConstants;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
@@ -13,7 +16,6 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
  * constants. This class should not be used for any other purpose. All constants should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>
  * It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
@@ -25,7 +27,54 @@ public final class Constants
         public static final TelemetryVerbosity swerveDriveTelemetryVerbosity = TelemetryVerbosity.HIGH;
     }
 
-    //TODO: Confirm values
+    // TODO: Confirm values
+    public static class ClimberConstants
+    {
+        public static final int winchMotorChannel = 0;
+        public static final IdleMode motorIdleMode = IdleMode.kBrake;
+        public static final double winchMotorSpeed = 0;
+
+    }
+
+    public static final class DashboardConstants
+    {
+        public static final class ClimberKeys
+        {
+            public static final String winchMotorSpeedKey = "Climber Motor Speed";
+
+        }
+    }
+
+    // TODO: Confirm values
+    public static final class ElevatorConstants
+    {
+        public static final int elevatorMotorChannel = 0;
+        public static final IdleMode motorIdleMode = IdleMode.kBrake;
+        public static final double elevatorMotorSpeed = 0;
+
+        public enum CoralLevel
+        {
+            Intake(0),
+            Reef1(1),
+            Reef2(2),
+            Reef3(3),
+            Reef4(4);
+
+            private final int elevatorPosition;
+
+            CoralLevel(int elevatorPosition)
+            {
+                this.elevatorPosition = elevatorPosition;
+            }
+
+            public int elevatorPosition()
+            {
+                return elevatorPosition;
+            }
+        }
+    }
+
+    // TODO: Confirm values
     public static class OperatorConstants
     {
         public static final int driverGamepadPort = 1;
@@ -33,15 +82,15 @@ public final class Constants
         public static final double gamepadDeadband = 0.05;
 
     }
-    //TODO: Confirm values
+
+    // TODO: Confirm values
     public static final class PathPlannerConstants
     {
         public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
         public static final PIDConstants ANGLE_PID = new PIDConstants(0.4, 0, 0.01);
     }
 
-
-    //TODO: Confirm values
+    // TODO: Confirm values
     public static final class SwerveConstants
     {
         public static final double maximumLinearVelocityMps = 10.0;

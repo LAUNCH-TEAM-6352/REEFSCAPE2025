@@ -9,7 +9,7 @@ import frc.robot.subsystems.DriveTrain;
 import swervelib.motors.SwerveMotor;
 
 /**
- * Tests the drive motor of a swerve mpodule.
+ * Tests the drive motor of a swerve module.
  */
 public class TestSwerveModuleDriveMotor extends Command
 {
