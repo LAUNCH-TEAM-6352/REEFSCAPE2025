@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.util.Enumeration;
-
 import com.pathplanner.lib.config.PIDConstants;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
@@ -48,7 +46,6 @@ public final class Constants
         public static final boolean isLeftRollerMotorInverted = false;
         public static final boolean isRightRollerMotorInverted = false;
         public static final double opticalSensorVoltageThreshold = 0.8;
-
     }
 
     public static final class DashboardConstants
@@ -63,7 +60,6 @@ public final class Constants
             public static final String rollerMotorSpeedKey = "Coral Manipulator Motor Speed";
             public static final String entranceOpticalSensorKey = "Entrance Optical Sensor";
             public static final String exitOpticalSensorKey = "Exit Optical Sensor";
-
         }
     }
 

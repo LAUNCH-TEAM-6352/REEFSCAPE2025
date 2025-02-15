@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import frc.robot.Constants.CoralManipulatorConstants;
 import com.revrobotics.spark.SparkBase.ResetMode;
 
-import com.pathplanner.lib.config.PIDConstants;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -49,7 +48,7 @@ public class CoralManipulator extends SubsystemBase
             }
             else
             {
-                config.follow(CoralManipulatorConstants.leftRollerMotorChannel, true);
+                config.follow(leftRollerMotor.getDeviceId(), true);
             }
 
             motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
