@@ -5,17 +5,26 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.CoralManipulator;
+import frc.robot.subsystems.Elevator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class EjectCoral extends Command {
+    private final CoralManipulator coralManipulator;
+    private final Elevator elevator;
   /** Creates a new EjectCoral. */
-  public EjectCoral() {
-    // Use addRequirements() here to declare subsystem dependencies.
-  }
+  public EjectCoral(CoralManipulator coralManipulator, Elevator elevator) {
+    this.coralManipulator = coralManipulator;
+    this.elevator = elevator;
+    // Will require Coral Manipulator, Elevator
+    addRequirements(coralManipulator, elevator);
+  
+}
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    
     //Run Coral Manipulator until both beams are not broken
   }
 

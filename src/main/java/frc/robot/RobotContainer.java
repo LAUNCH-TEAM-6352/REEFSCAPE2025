@@ -18,11 +18,16 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ClimberConstants;
+import frc.robot.Constants.CoralManipulatorConstants;
 import frc.robot.Constants.DashboardConstants.ClimberKeys;
+import frc.robot.Constants.DashboardConstants.CoralManipulatorKeys;
 import frc.robot.commands.DriveWithGamepad;
 import frc.robot.commands.test.TestDriveTrain;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.CoralManipulator;
+import frc.robot.subsystems.Elevator;
+
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.Climb;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -38,6 +43,7 @@ public class RobotContainer
     // Subsystems:
     private final Optional<DriveTrain> driveTrain;
     private final Optional<Climber> climber;
+    private final Optional<CoralManipulator> coralManipulator;
 
     // OI devices:
 
@@ -60,6 +66,7 @@ public class RobotContainer
         // -dt- Drive train
         // -oi- OI devices
         // -cl- Climber
+        // -cm- Coral manipulator
 
         var gameData = DriverStation.getGameSpecificMessage().toLowerCase();
         SmartDashboard.putString("Game Data", gameData);
@@ -89,6 +96,10 @@ public class RobotContainer
 
         climber = gameData.isBlank() || gameData.contains("-cl-")
             ? Optional.of(new Climber())
+            : Optional.empty();
+
+        coralManipulator = gameData.isBlank() || gameData.contains("-cm-")
+            ? Optional.of(new CoralManipulator())
             : Optional.empty();
 
         // Configure commands for Path Planner:
@@ -160,6 +171,7 @@ public class RobotContainer
     {
         driveTrain.ifPresent(this::configureSmartDashboard);
         climber.ifPresent(this::configureSmartDashboard);
+        coralManipulator.ifPresent(this::configureSmartDashboard);
 
         // Configure chooser widgets:
         configureDriveOrientationChooser(driveOrientationChooser);
@@ -173,6 +185,12 @@ public class RobotContainer
     private void configureSmartDashboard(Climber climber)
     {
         SmartDashboard.putNumber(ClimberKeys.winchMotorSpeedKey, ClimberConstants.winchMotorSpeed);
+
+    }
+
+    private void configureSmartDashboard(CoralManipulator coralManipulator)
+    {
+        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorSpeedKey, CoralManipulatorConstants.rollerMotorSpeed);
 
     }
 

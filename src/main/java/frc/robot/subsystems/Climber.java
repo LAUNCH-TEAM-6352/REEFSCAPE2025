@@ -42,5 +42,6 @@ public class Climber extends SubsystemBase
     {
         // This method will be called once per scheduler run
     SmartDashboard.putNumber("Climber/RPM", winchMotor.getEncoder().getVelocity());
+
     }
 }

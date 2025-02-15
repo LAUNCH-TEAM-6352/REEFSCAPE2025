@@ -36,11 +36,33 @@ public final class Constants
 
     }
 
+    // TODO: Confirm values
+    public static class CoralManipulatorConstants
+    {
+        public static final int leftRollerMotorChannel = 0;
+        public static final int rightRollerMotorChannel = 0;
+        public static final IdleMode motorIdleMode = IdleMode.kBrake;
+        public static final double rollerMotorSpeed = 0;
+        public static final int entranceOpticalSensorPort = 0;
+        public static final int exitOpticalSensorPort = 0;
+        public static final boolean isLeftRollerMotorInverted = false;
+        public static final boolean isRightRollerMotorInverted = false;
+        public static final double opticalSensorVoltageThreshold = 0.8;
+
+    }
+
     public static final class DashboardConstants
     {
         public static final class ClimberKeys
         {
             public static final String winchMotorSpeedKey = "Climber Motor Speed";
+
+        }
+        public static final class CoralManipulatorKeys
+        {
+            public static final String rollerMotorSpeedKey = "Coral Manipulator Motor Speed";
+            public static final String entranceOpticalSensorKey = "Entrance Optical Sensor";
+            public static final String exitOpticalSensorKey = "Exit Optical Sensor";
 
         }
     }
