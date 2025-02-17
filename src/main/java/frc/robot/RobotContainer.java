@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -150,21 +151,35 @@ public class RobotContainer
     {
         // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
         climber.ifPresent(this::configureBindings);
+        coralManipulator.ifPresent(this::configureBindings);
 
         // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
         // cancelling on release.
 
     }
 
-    private void configureBindings(Climber climber)
+    private void configureBindings(CoralManipulator coralManipulator)
     {
-        if (codriverGamepad != null)
+        if (codriverGamepad == null)
         {
             return;
         }
-        new JoystickButton(codriverGamepad, Button.kB.value).and(
-            new JoystickButton(codriverGamepad, Button.kA.value))
-                .whileTrue(new Climb(climber, ClimberKeys.winchMotorSpeedKey));
+        new JoystickButton(codriverGamepad, Button.kLeftBumper.value)
+            .onTrue(new InstantCommand(() -> coralManipulator.intakeCoral(CoralManipulatorKeys.rollerMotorSpeedKey)));
+        new JoystickButton(codriverGamepad, Button.kRightBumper.value)
+            .onTrue(new InstantCommand(() -> coralManipulator.ejectCoral(CoralManipulatorKeys.rollerMotorSpeedKey,
+                CoralManipulatorKeys.extraTimeSecsKey)));
+    }
+
+    private void configureBindings(Climber climber)
+    {
+        if (codriverGamepad == null)
+        {
+            return;
+        }
+        new JoystickButton(codriverGamepad, Button.kStart.value).and(
+            new JoystickButton(codriverGamepad, Button.kBack.value))
+            .whileTrue(new Climb(climber, ClimberKeys.winchMotorSpeedKey));
     }
 
     private void configureSmartDashboard()
@@ -191,6 +206,9 @@ public class RobotContainer
     private void configureSmartDashboard(CoralManipulator coralManipulator)
     {
         SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorSpeedKey, CoralManipulatorConstants.rollerMotorSpeed);
+        SmartDashboard.putNumber(CoralManipulatorKeys.opticalSensorVoltageThresholdKey,
+            CoralManipulatorConstants.opticalSensorVoltageThreshold);
+        SmartDashboard.putNumber(CoralManipulatorKeys.extraTimeSecsKey, CoralManipulatorConstants.extraTimeSecs);
 
     }
 

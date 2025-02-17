@@ -18,21 +18,21 @@ public class Climber extends SubsystemBase
     private final SparkMax winchMotor = new SparkMax(ClimberConstants.winchMotorChannel, MotorType.kBrushless);
 
     /** Creates a new Climber. */
-  public Climber() 
-  {
+    public Climber()
+    {
 
-    SparkMaxConfig config = new SparkMaxConfig();
-    config .idleMode (ClimberConstants.motorIdleMode);
-    winchMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    winchMotor.clearFaults();
-  }
+        SparkMaxConfig config = new SparkMaxConfig();
+        config.idleMode(ClimberConstants.motorIdleMode);
+        winchMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        winchMotor.clearFaults();
+    }
 
-  public void setClimbSpeed(double speed)
-  {
-    winchMotor.set(speed);
-  }
+    public void setClimbSpeed(double speed)
+    {
+        winchMotor.set(speed);
+    }
 
-  public void stop()
+    public void stop()
     {
         winchMotor.stopMotor();
     }
@@ -41,7 +41,7 @@ public class Climber extends SubsystemBase
     public void periodic()
     {
         // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Climber/RPM", winchMotor.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Climber/RPM", winchMotor.getEncoder().getVelocity());
 
     }
 }

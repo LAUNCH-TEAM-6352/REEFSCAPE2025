@@ -21,7 +21,7 @@ public class DriveWithGamepad extends Command
     private Optional<Alliance> alliance;
 
     public DriveWithGamepad(DriveTrain driveTrain, XboxController driverController,
-                    SendableChooser<Boolean> driveOrientationChooser)
+        SendableChooser<Boolean> driveOrientationChooser)
     {
         this.DriveTrain = driveTrain;
         this.driverController = driverController;
@@ -41,7 +41,7 @@ public class DriveWithGamepad extends Command
     public void execute()
     {
         // Determine if we need to invert drive directions based upon drive orientation:
-        var isFieldRelative = driveOrientationChooser.getSelected(); 
+        var isFieldRelative = driveOrientationChooser.getSelected();
         var fieldInversionFactor = isFieldRelative && alliance.isPresent() && alliance.get() == Alliance.Red
             ? -1
             : 1;
