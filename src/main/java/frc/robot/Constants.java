@@ -70,10 +70,10 @@ public final class Constants
         }
         public static final class ElevatorKeys
         {
-            public static final String speedKey = "Elevator Speed";
-            public static final String positionKey = "Elevator Pos";
             public static final String minOutputKey = "Min Output";
             public static final String maxOutputKey = "Max Output";
+            public static final String toleranceKey = "Tolerance"; 
+            
         }
     }
 
@@ -99,7 +99,7 @@ public final class Constants
         public static final class AlternateEncoderConstants
         {
             public static final int countsPerRevolution = 8192;
-            public static final boolean isInverted = false;
+            public static final boolean isInverted = true;
             public static final double positionConversionFactor = 1;
         }
 
@@ -113,6 +113,8 @@ public final class Constants
             {
                 this.elevatorPosition = elevatorPosition;
             }
+
+
 
             public int elevatorPosition()
             {
@@ -168,6 +170,7 @@ public final class Constants
         public static final double swerveModuleDriveReversePercentOutput = -0.25;
         public static final double swerveModuleAngleCcwPercentOutput = 0.25;
         public static final double swerveModuleAngleCwPercentOutput = -0.25;
+        public static final double coralManipulatorTimeoutSecs = 5;
     }
 
 }

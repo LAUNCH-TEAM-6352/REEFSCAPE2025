@@ -7,6 +7,7 @@ package frc.robot;
 import java.util.Optional;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import com.thethriftybot.ThriftyNova.PIDConfig;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
@@ -20,10 +21,15 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.CoralManipulatorConstants;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.DashboardConstants.ClimberKeys;
 import frc.robot.Constants.DashboardConstants.CoralManipulatorKeys;
+import frc.robot.Constants.DashboardConstants.ElevatorKeys;
 import frc.robot.commands.DriveWithGamepad;
+import frc.robot.commands.MoveElevatorToPosition;
+import frc.robot.commands.MoveElevatorWithGamepad;
 import frc.robot.commands.test.TestDriveTrain;
+import frc.robot.commands.test.TestElevator;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralManipulator;
@@ -45,11 +51,12 @@ public class RobotContainer
     private final Optional<DriveTrain> driveTrain;
     private final Optional<Climber> climber;
     private final Optional<CoralManipulator> coralManipulator;
+    private final Optional<Elevator> elevator;
 
     // OI devices:
 
     private final XboxController driverGamepad;
-    private final XboxController codriverGamepad;
+    private final CommandXboxController codriverGamepad;
 
     SendableChooser<Boolean> driveOrientationChooser = new SendableChooser<>();
     SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -68,6 +75,7 @@ public class RobotContainer
         // -oi- OI devices
         // -cl- Climber
         // -cm- Coral manipulator
+        // -e- Elevator
 
         var gameData = DriverStation.getGameSpecificMessage().toLowerCase();
         SmartDashboard.putString("Game Data", gameData);
@@ -80,13 +88,13 @@ public class RobotContainer
                 ? new XboxController(OperatorConstants.driverGamepadPort)
                 : null;
             codriverGamepad = DriverStation.isJoystickConnected(OperatorConstants.codriverGamepadPort)
-                ? new XboxController(OperatorConstants.codriverGamepadPort)
+                ? new CommandXboxController(OperatorConstants.codriverGamepadPort)
                 : null;
         }
         else
         {
             // In competition, don't take chances and always create all OI devices:
-            codriverGamepad = new XboxController(OperatorConstants.codriverGamepadPort);
+            codriverGamepad = new CommandXboxController(OperatorConstants.codriverGamepadPort);
             driverGamepad = new XboxController(OperatorConstants.driverGamepadPort);
         }
 
@@ -101,6 +109,10 @@ public class RobotContainer
 
         coralManipulator = gameData.isBlank() || gameData.contains("-cm-")
             ? Optional.of(new CoralManipulator())
+            : Optional.empty();
+
+        elevator = gameData.isBlank() || gameData.contains("-e-")
+            ? Optional.of(new Elevator())
             : Optional.empty();
 
         // Configure commands for Path Planner:
@@ -152,6 +164,7 @@ public class RobotContainer
         // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
         climber.ifPresent(this::configureBindings);
         coralManipulator.ifPresent(this::configureBindings);
+        elevator.ifPresent(this::configureBindings);
 
         // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
         // cancelling on release.
@@ -164,9 +177,9 @@ public class RobotContainer
         {
             return;
         }
-        new JoystickButton(codriverGamepad, Button.kLeftBumper.value)
+        codriverGamepad.leftBumper()
             .onTrue(new InstantCommand(() -> coralManipulator.intakeCoral(CoralManipulatorKeys.rollerMotorSpeedKey)));
-        new JoystickButton(codriverGamepad, Button.kRightBumper.value)
+        codriverGamepad.rightBumper()
             .onTrue(new InstantCommand(() -> coralManipulator.ejectCoral(CoralManipulatorKeys.rollerMotorSpeedKey,
                 CoralManipulatorKeys.extraTimeSecsKey)));
     }
@@ -177,9 +190,19 @@ public class RobotContainer
         {
             return;
         }
-        new JoystickButton(codriverGamepad, Button.kStart.value).and(
-            new JoystickButton(codriverGamepad, Button.kBack.value))
+        codriverGamepad.start().and(codriverGamepad.back())
             .whileTrue(new Climb(climber, ClimberKeys.winchMotorSpeedKey));
+    }
+
+    private void configureBindings(Elevator elevator)
+    {
+        if (codriverGamepad == null)
+        {
+            return;
+        }
+        codriverGamepad.rightStick()
+            .onTrue(new MoveElevatorWithGamepad(elevator, codriverGamepad));
+
     }
 
     private void configureSmartDashboard()
@@ -187,6 +210,7 @@ public class RobotContainer
         driveTrain.ifPresent(this::configureSmartDashboard);
         climber.ifPresent(this::configureSmartDashboard);
         coralManipulator.ifPresent(this::configureSmartDashboard);
+        elevator.ifPresent(this::configureSmartDashboard);
 
         // Configure chooser widgets:
         configureDriveOrientationChooser(driveOrientationChooser);
@@ -209,6 +233,12 @@ public class RobotContainer
         SmartDashboard.putNumber(CoralManipulatorKeys.opticalSensorVoltageThresholdKey,
             CoralManipulatorConstants.opticalSensorVoltageThreshold);
         SmartDashboard.putNumber(CoralManipulatorKeys.extraTimeSecsKey, CoralManipulatorConstants.extraTimeSecs);
+
+    }
+
+    private void configureSmartDashboard(Elevator elevator)
+    {
+        SmartDashboard.putNumber(ElevatorKeys.toleranceKey, ElevatorConstants.PIDConstants.tolerance);
 
     }
 
@@ -240,6 +270,10 @@ public class RobotContainer
         if (driveTrain.isPresent())
         {
             group.addCommands(new TestDriveTrain(driveTrain.get()));
+        }
+        if (elevator.isPresent())
+        {
+            group.addCommands(new TestElevator(elevator.get()));
         }
 
         return group;

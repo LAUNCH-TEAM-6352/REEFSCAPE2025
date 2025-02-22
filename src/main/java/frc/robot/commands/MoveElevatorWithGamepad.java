@@ -4,23 +4,31 @@
 
 package frc.robot.commands;
 
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class MoveElevator extends Command
+public class MoveElevatorWithGamepad extends Command
+
 {
     private final Elevator elevator;
+    private final CommandXboxController gamepad;
 
-    /** Creates a new MoveElevator. */
-    public MoveElevator(Elevator elevator)
+    /** Creates a new MoveElevatorWithGamepad. */
+    public MoveElevatorWithGamepad(Elevator elevator, CommandXboxController gamepad)
     {
         this.elevator = elevator;
+        this.gamepad = gamepad;
         addRequirements(elevator);
+    }
+
+    {
+        // Use addRequirements() here to declare subsystem dependencies.
+        addRequirements();
     }
 
     // Called when the command is initially scheduled.
@@ -33,6 +41,19 @@ public class MoveElevator extends Command
     @Override
     public void execute()
     {
+        var speed = -gamepad.getRightY();
+        var position = elevator.getPosition();
+        if ((speed < 0 && position <= ElevatorConstants.minPosition) ||
+            (speed > 0 && position >= ElevatorConstants.maxPosition))
+        {
+            speed = 0;
+            gamepad.setRumble(RumbleType.kBothRumble, 1);
+        }
+        else
+        {
+            gamepad.setRumble(RumbleType.kBothRumble, 0);
+        }
+        elevator.setMotorSpeed(speed);
     }
 
     // Called once the command ends or is interrupted.
