@@ -19,39 +19,53 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
  */
 public final class Constants
 {
-
-    // TODO: Confirm Values
     public static class AlgaeConstants
     {
         public static final int pivotMotorChannel = 45;
+        public static final IdleMode pivotMotorIdleMode = IdleMode.kBrake;
+        public static final boolean isPivotMotorInverted = false;
+        public static final double pivotMotorMinPosition = 0;
+        public static final double pivotMotorMaxPosition = 1000;
+        public static final double pivotMotorSpeed = .5;
+
         public static final int rollerMotorChannel = 46;
-        public static final IdleMode motorIdleMode = IdleMode.kBrake;
-        public static final double pivotMotorSpeed = 0;
-        public static final double rollerMotorSpeed = 0;
+        public static final double rollerMotorIntakeSpeed = .5;
+        public static final double rollerMotorEjectSpeed = -.5;
+        public static final IdleMode rollerMotorIdleMode = IdleMode.kBrake;
+        public static final boolean isRollerMotorInverted = false; 
     }
 
-    // TODO: Confirm values
     public static class ClimberConstants
     {
         public static final int winchMotorChannel = 47;
         public static final IdleMode motorIdleMode = IdleMode.kBrake;
-        public static final double winchMotorSpeed = 0;
+        public static final double winchMotorSpeed = 0.2;
+        public static final boolean isMotorInverted = false;
+        public static final double maxPosition = 1000;
+        public static final double minPosition = 0;
+
+        public static class EncoderConstants
+        {
+            public static final int countsPerRevolution = 4096;
+            public static final boolean isInverted = false;
+            public static final double positionConversionFactor = 1; // One position per rotation
+            public static final double velocityConversionFactor = 1; // Rotations per minute
+        }
 
     }
 
-    // TODO: Confirm values
     public static class CoralManipulatorConstants
     {
         public static final int leftRollerMotorChannel = 41;
         public static final int rightRollerMotorChannel = 42;
         public static final IdleMode motorIdleMode = IdleMode.kBrake;
-        public static final double rollerMotorSpeed = 0;
-        public static final int entranceOpticalSensorPort = 0;
-        public static final int exitOpticalSensorPort = 1;
+        public static final double rollerMotorSpeed = .5;
+        public static final int entranceOpticalSensorPort = 1;
+        public static final int exitOpticalSensorPort = 0;
         public static final boolean isLeftRollerMotorInverted = false;
         public static final boolean isRightRollerMotorInverted = false;
         public static final double opticalSensorVoltageThreshold = 0.8;
-        public static final double extraTimeSecs = 1;
+        public static final double extraTimeSecs = 2;
     }
 
     public static final class DashboardConstants
@@ -82,15 +96,15 @@ public final class Constants
         public static final TelemetryVerbosity swerveDriveTelemetryVerbosity = TelemetryVerbosity.HIGH;
     }
 
-    // TODO: Confirm values
     public static final class ElevatorConstants
     {
         public static final int leftMotorChannel = 43;
         public static final int rightMotorChannel = 44;
         public static final boolean isLeftMotorInverted = false;
+        public static final boolean isRightMotorInverted = true;
 
         public static final IdleMode motorIdleMode = IdleMode.kBrake;
-        public static final double motorSpeed = 0;
+        public static final double maxManualMotorSpeed = 0.5; // For manual positioning
 
         public static final double minPosition = 0;
         public static final double maxPosition = 100;
@@ -99,8 +113,9 @@ public final class Constants
         public static final class AlternateEncoderConstants
         {
             public static final int countsPerRevolution = 8192;
-            public static final boolean isInverted = true;
-            public static final double positionConversionFactor = 1;
+            public static final boolean isInverted = true; // by default, cw rotation is negative
+            public static final double positionConversionFactor = 1; // One position per rotation
+            public static final double velocityConversionFactor = 1; // Rotations per minute
         }
 
         public enum CoralLevel
@@ -135,23 +150,19 @@ public final class Constants
         }
     }
 
-    // TODO: Confirm values
     public static class OperatorConstants
     {
         public static final int driverGamepadPort = 1;
         public static final int codriverGamepadPort = 2;
         public static final double gamepadDeadband = 0.05;
-
     }
 
-    // TODO: Confirm values
     public static final class PathPlannerConstants
     {
         public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
         public static final PIDConstants ANGLE_PID = new PIDConstants(0.4, 0, 0.01);
     }
 
-    // TODO: Confirm values
     public static final class SwerveConstants
     {
         public static final double maximumLinearVelocityMps = 10.0;

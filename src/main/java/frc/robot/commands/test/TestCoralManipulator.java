@@ -4,7 +4,9 @@
 
 package frc.robot.commands.test;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.CoralManipulatorConstants;
 import frc.robot.subsystems.CoralManipulator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -12,6 +14,7 @@ public class TestCoralManipulator extends Command
 {
     private final CoralManipulator coralManipulator;
     private final String speedKey;
+    private double speed;
 
     /** Creates a new TestCoralManipulator. */
     public TestCoralManipulator(CoralManipulator coralManipulator, String speedKey)
@@ -26,18 +29,22 @@ public class TestCoralManipulator extends Command
     @Override
     public void initialize()
     {
+        speed = SmartDashboard.getNumber(speedKey, CoralManipulatorConstants.rollerMotorSpeed);
+        System.out.println("Testing Coral Manipulator");
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute()
     {
+        coralManipulator.setRollerSpeed(speed);
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted)
     {
+        coralManipulator.stop();
     }
 
     // Returns true when the command should end.

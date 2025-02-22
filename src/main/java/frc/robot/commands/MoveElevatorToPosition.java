@@ -27,7 +27,6 @@ public class MoveElevatorToPosition extends Command
             put(90, CoralLevel.Reef3);
             put(180, CoralLevel.Reef4);
             put(270, CoralLevel.Reef1);
-            
         }
     };
 

@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.AlternateEncoderConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig;
@@ -36,17 +37,20 @@ public class Elevator extends SubsystemBase
     private final SparkMax rightMotor = new SparkMax(ElevatorConstants.rightMotorChannel,
         MotorType.kBrushless);
 
+    private final SparkMax leaderMotor = leftMotor;
+    private final boolean isLeaderMotorInvedrted = ElevatorConstants.isLeftMotorInverted;
+
     /** Creates a new Elevator. */
     public Elevator()
     {
         AlternateEncoderConfig encoderConfig = new AlternateEncoderConfig()
             .averageDepth(64)
-            .countsPerRevolution(8192)
-            .inverted(AlternateEncoderConstants.isInverted) // by default, cw rotation is negative
+            .countsPerRevolution(AlternateEncoderConstants.countsPerRevolution)
+            .inverted(AlternateEncoderConstants.isInverted) 
             .measurementPeriod(100)
-            .positionConversionFactor(1)
+            .positionConversionFactor(AlternateEncoderConstants.positionConversionFactor)
             .setSparkMaxDataPortConfig()
-            .velocityConversionFactor(1); // velocity will be measured in hex shaft rotations per minuite
+            .velocityConversionFactor(AlternateEncoderConstants.velocityConversionFactor);
 
         SoftLimitConfig softLimitConfig = new SoftLimitConfig()
             .forwardSoftLimit(ElevatorConstants.maxPosition)
@@ -66,18 +70,17 @@ public class Elevator extends SubsystemBase
             config
                 .idleMode(ElevatorConstants.motorIdleMode);
 
-            if (motor == leftMotor)
+            if (motor == leaderMotor)
             {
-                config.inverted(ElevatorConstants.isLeftMotorInverted);
+                config.inverted(isLeaderMotorInvedrted);
                 config
                     .apply(encoderConfig)
                     .apply(softLimitConfig)
                     .apply(closedLoopConfig);
-
             }
             else
             {
-                config.follow(leftMotor.getDeviceId(), true);
+                config.follow(leaderMotor.getDeviceId(), ElevatorConstants.isLeftMotorInverted != ElevatorConstants.isRightMotorInverted);
             }
             motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
             motor.clearFaults();
@@ -88,17 +91,17 @@ public class Elevator extends SubsystemBase
 
     public void setMotorSpeed(double speed)
     {
-        leftMotor.set(speed);
+        leaderMotor.set(speed);
     }
 
     public double getPosition()
     {
-        return leftMotor.getAlternateEncoder().getPosition();
+        return leaderMotor.getAlternateEncoder().getPosition();
     }
 
     public void resetPosition()
     {
-        leftMotor.getAlternateEncoder().setPosition(0);
+        leaderMotor.getAlternateEncoder().setPosition(0);
     }
 
     public void setPosition(double position, double tolerance)
@@ -115,7 +118,7 @@ public class Elevator extends SubsystemBase
         targetPosition = position;
         targetTolerance = tolerance;
         lastPosition = getPosition();
-        leftMotor.getClosedLoopController().setReference(targetPosition, ControlType.kPosition);
+        leaderMotor.getClosedLoopController().setReference(targetPosition, ControlType.kPosition);
         atTargetPosition = false;
         isPositioningStarted = true;
     }
@@ -133,8 +136,8 @@ public class Elevator extends SubsystemBase
         var position = getPosition();
 
         SmartDashboard.putNumber("Elev Pos", position);
-        SmartDashboard.putNumber("Elev Vel", leftMotor.getAlternateEncoder().getVelocity());
-        SmartDashboard.putNumber("Elev Spd", rightMotor.getAppliedOutput());
+        SmartDashboard.putNumber("Elev RPM", leaderMotor.getAlternateEncoder().getVelocity());
+        SmartDashboard.putNumber("Elev Spd", leaderMotor.getAppliedOutput());
 
         if (isPositioningStarted)
         {

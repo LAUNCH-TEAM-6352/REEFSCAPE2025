@@ -6,9 +6,6 @@ package frc.robot;
 
 import java.util.Optional;
 
-import com.pathplanner.lib.auto.NamedCommands;
-import com.thethriftybot.ThriftyNova.PIDConfig;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -18,26 +15,24 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.CoralManipulatorConstants;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.DashboardConstants.ClimberKeys;
 import frc.robot.Constants.DashboardConstants.CoralManipulatorKeys;
 import frc.robot.Constants.DashboardConstants.ElevatorKeys;
+import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.TestConstants;
+import frc.robot.commands.Climb;
 import frc.robot.commands.DriveWithGamepad;
-import frc.robot.commands.MoveElevatorToPosition;
 import frc.robot.commands.MoveElevatorWithGamepad;
+import frc.robot.commands.test.TestCoralManipulator;
 import frc.robot.commands.test.TestDriveTrain;
 import frc.robot.commands.test.TestElevator;
-import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralManipulator;
+import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Elevator;
-
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.Climb;
-import edu.wpi.first.wpilibj.XboxController.Button;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -190,8 +185,10 @@ public class RobotContainer
         {
             return;
         }
+
+        // TODO: run a SequentialCommandGroup that moves coral tray out of the way then climbs
         codriverGamepad.start().and(codriverGamepad.back())
-            .whileTrue(new Climb(climber, ClimberKeys.winchMotorSpeedKey));
+            .whileTrue(new Climb(climber, ClimberKeys.winchMotorSpeedKey, codriverGamepad));
     }
 
     private void configureBindings(Elevator elevator)
@@ -214,7 +211,6 @@ public class RobotContainer
 
         // Configure chooser widgets:
         configureDriveOrientationChooser(driveOrientationChooser);
-
     }
 
     private void configureSmartDashboard(DriveTrain driveTrain)
@@ -233,7 +229,6 @@ public class RobotContainer
         SmartDashboard.putNumber(CoralManipulatorKeys.opticalSensorVoltageThresholdKey,
             CoralManipulatorConstants.opticalSensorVoltageThreshold);
         SmartDashboard.putNumber(CoralManipulatorKeys.extraTimeSecsKey, CoralManipulatorConstants.extraTimeSecs);
-
     }
 
     private void configureSmartDashboard(Elevator elevator)
@@ -270,10 +265,15 @@ public class RobotContainer
         if (driveTrain.isPresent())
         {
             group.addCommands(new TestDriveTrain(driveTrain.get()));
-        }
+        };
         if (elevator.isPresent())
         {
             group.addCommands(new TestElevator(elevator.get()));
+        }
+        if (coralManipulator.isPresent())
+        {
+            group.addCommands(new TestCoralManipulator(coralManipulator.get(), CoralManipulatorKeys.rollerMotorSpeedKey)
+                .withTimeout((TestConstants.coralManipulatorTimeoutSecs)));
         }
 
         return group;

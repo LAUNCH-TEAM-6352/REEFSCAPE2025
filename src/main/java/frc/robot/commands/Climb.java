@@ -4,10 +4,12 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants.ClimberConstants;
-import frc.robot.subsystems.Climber;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.ClimberConstants;
+import frc.robot.subsystems.Climber;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Climb extends Command
@@ -15,14 +17,16 @@ public class Climb extends Command
     private final Climber climber;
     private double speed;
     private final String speedKey;
+    private final CommandXboxController gamepad;
 
     /** Creates a new Climb. */
-    public Climb(Climber climber, String speedKey)
+    public Climb(Climber climber, String speedKey, CommandXboxController gamepad)
     {
+        this.gamepad = gamepad;
         this.climber = climber;
+        this.speedKey = speedKey;
         // Will also require Coral Reciever
         addRequirements(climber);
-        this.speedKey = speedKey;
     }
 
     // Called when the command is initially scheduled.
@@ -37,6 +41,18 @@ public class Climb extends Command
     @Override
     public void execute()
     {
+        var speed = this.speed;
+        var position = climber.getPosition();
+        if ((speed < 0 && position <= ClimberConstants.minPosition) ||
+            (speed > 0 && position >= ClimberConstants.maxPosition))
+        {
+            speed = 0;
+            gamepad.setRumble(RumbleType.kBothRumble, 1);
+        }
+        else
+        {
+            gamepad.setRumble(RumbleType.kBothRumble, 0);
+        }
         climber.setClimbSpeed(speed);
     }
 
