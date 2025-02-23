@@ -38,7 +38,7 @@ public class Elevator extends SubsystemBase
         MotorType.kBrushless);
 
     private final SparkMax leaderMotor = leftMotor;
-    private final boolean isLeaderMotorInvedrted = ElevatorConstants.isLeftMotorInverted;
+    private final boolean isLeaderMotorInverted = ElevatorConstants.isLeftMotorInverted;
 
     /** Creates a new Elevator. */
     public Elevator()
