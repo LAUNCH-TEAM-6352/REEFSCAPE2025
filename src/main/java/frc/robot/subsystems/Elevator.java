@@ -72,7 +72,7 @@ public class Elevator extends SubsystemBase
 
             if (motor == leaderMotor)
             {
-                config.inverted(isLeaderMotorInvedrted);
+                config.inverted(isLeaderMotorInverted);
                 config
                     .apply(encoderConfig)
                     .apply(softLimitConfig)
