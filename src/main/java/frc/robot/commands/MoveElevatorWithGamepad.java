@@ -5,8 +5,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
 
@@ -14,10 +14,10 @@ import frc.robot.subsystems.Elevator;
 public class MoveElevatorWithGamepad extends Command
 {
     private final Elevator elevator;
-    private final CommandXboxController gamepad;
+    private final XboxController gamepad;
 
     /** Creates a new MoveElevatorWithGamepad. */
-    public MoveElevatorWithGamepad(Elevator elevator, CommandXboxController gamepad)
+    public MoveElevatorWithGamepad(Elevator elevator, XboxController gamepad)
     {
         this.elevator = elevator;
         this.gamepad = gamepad;

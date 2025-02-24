@@ -25,6 +25,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.TestConstants;
 import frc.robot.commands.Climb;
 import frc.robot.commands.DriveWithGamepad;
+import frc.robot.commands.MoveElevatorToPosition;
 import frc.robot.commands.MoveElevatorWithGamepad;
 import frc.robot.commands.test.TestCoralManipulator;
 import frc.robot.commands.test.TestDriveTrain;
@@ -51,7 +52,8 @@ public class RobotContainer
     // OI devices:
 
     private final XboxController driverGamepad;
-    private final CommandXboxController codriverGamepad;
+    private final XboxController codriverGamepad;
+    private final CommandXboxController commandCodriverGamepad;
 
     SendableChooser<Boolean> driveOrientationChooser = new SendableChooser<>();
     SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -83,13 +85,17 @@ public class RobotContainer
                 ? new XboxController(OperatorConstants.driverGamepadPort)
                 : null;
             codriverGamepad = DriverStation.isJoystickConnected(OperatorConstants.codriverGamepadPort)
+                ? new XboxController(OperatorConstants.codriverGamepadPort)
+                : null;
+            commandCodriverGamepad = DriverStation.isJoystickConnected(OperatorConstants.codriverGamepadPort)
                 ? new CommandXboxController(OperatorConstants.codriverGamepadPort)
                 : null;
         }
         else
         {
             // In competition, don't take chances and always create all OI devices:
-            codriverGamepad = new CommandXboxController(OperatorConstants.codriverGamepadPort);
+            commandCodriverGamepad = new CommandXboxController(OperatorConstants.codriverGamepadPort);
+            codriverGamepad = new XboxController(OperatorConstants.codriverGamepadPort);
             driverGamepad = new XboxController(OperatorConstants.driverGamepadPort);
         }
 
@@ -156,50 +162,49 @@ public class RobotContainer
      */
     private void configureBindings()
     {
-        // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
         climber.ifPresent(this::configureBindings);
         coralManipulator.ifPresent(this::configureBindings);
         elevator.ifPresent(this::configureBindings);
-
-        // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-        // cancelling on release.
-
     }
 
     private void configureBindings(CoralManipulator coralManipulator)
     {
-        if (codriverGamepad == null)
+        if (commandCodriverGamepad == null)
         {
             return;
         }
-        codriverGamepad.leftBumper()
+
+        commandCodriverGamepad.leftBumper()
             .onTrue(new InstantCommand(() -> coralManipulator.intakeCoral(CoralManipulatorKeys.rollerMotorSpeedKey)));
-        codriverGamepad.rightBumper()
+
+        commandCodriverGamepad.rightBumper()
             .onTrue(new InstantCommand(() -> coralManipulator.ejectCoral(CoralManipulatorKeys.rollerMotorSpeedKey,
                 CoralManipulatorKeys.extraTimeSecsKey)));
     }
 
     private void configureBindings(Climber climber)
     {
-        if (codriverGamepad == null)
+        if (commandCodriverGamepad == null || codriverGamepad == null)
         {
             return;
         }
 
-        // TODO: run a SequentialCommandGroup that moves coral tray out of the way then climbs
-        codriverGamepad.start().and(codriverGamepad.back())
+        // TODO: Need to move coral trey out of the way before climbing,
+        // but don't want to make moving the coral tray part of the whileTrue().
+        commandCodriverGamepad.start().and(commandCodriverGamepad.back())
             .whileTrue(new Climb(climber, ClimberKeys.winchMotorSpeedKey, codriverGamepad));
     }
 
     private void configureBindings(Elevator elevator)
     {
-        if (codriverGamepad == null)
+        if (commandCodriverGamepad == null || codriverGamepad == null)
         {
             return;
         }
-        codriverGamepad.rightStick()
+        commandCodriverGamepad.rightStick()
             .onTrue(new MoveElevatorWithGamepad(elevator, codriverGamepad));
 
+        commandCodriverGamepad.a().onTrue(new MoveElevatorToPosition(elevator, codriverGamepad, ElevatorKeys.toleranceKey));
     }
 
     private void configureSmartDashboard()
@@ -251,7 +256,6 @@ public class RobotContainer
      */
     public Command getAutonomousCommand()
     {
-        // An example command will be run in autonomous
         return null;
     }
 

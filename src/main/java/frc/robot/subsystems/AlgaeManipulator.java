@@ -24,6 +24,7 @@ public class AlgaeManipulator extends SubsystemBase
     /** Creates a new AlgaeManipulator. */
     public AlgaeManipulator()
     {
+        // TODO: Do we need to add a PID controller and support for moving to preset positions?
         SoftLimitConfig softLimitConfig = new SoftLimitConfig()
             .forwardSoftLimit(AlgaeConstants.pivotMotorMaxPosition)
             .forwardSoftLimitEnabled(true)
