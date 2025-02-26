@@ -29,7 +29,7 @@ public class TestSwerveModuleAngleMotor extends Command
     @Override
     public void initialize()
     {
-        System.out.println("Running Steer Motor: " + moduleName);
+        System.out.println("Running Steer Motor: " + moduleName + " at " + percentOutput);
     }
 
     // Called every time the scheduler runs while the command is scheduled.

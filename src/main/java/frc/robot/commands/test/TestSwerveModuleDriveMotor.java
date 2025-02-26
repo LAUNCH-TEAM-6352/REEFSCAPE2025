@@ -30,7 +30,7 @@ public class TestSwerveModuleDriveMotor extends Command
     public void initialize()
     {
         
-        System.out.println("Running Drive Motor: " + moduleName );
+        System.out.println("Running Drive Motor: " + moduleName  + " at " + percentOutput);
     }
 
     // Called every time the scheduler runs while the command is scheduled.

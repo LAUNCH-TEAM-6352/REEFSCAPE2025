@@ -20,6 +20,8 @@ public class TestSwerveDriveModule extends SequentialCommandGroup
         // Add your commands in the addCommands() call, e.g.
         // addCommands(new FooCommand(), new BarCommand());
         addCommands(
+
+        
             new TestSwerveModuleDriveMotor(driveTrain, moduleName, TestConstants.swerveModuleDriveForwardPercentOutput).withTimeout(TestConstants.swerveModuleMotorTimeoutSecs),
             new WaitCommand(TestConstants.inbetweenTimeSecs),
 
