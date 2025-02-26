@@ -6,20 +6,35 @@ package frc.robot;
 
 import java.util.Optional;
 
-import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ClimberConstants;
+import frc.robot.Constants.CoralManipulatorConstants;
+import frc.robot.Constants.DashboardConstants.ClimberKeys;
+import frc.robot.Constants.DashboardConstants.CoralManipulatorKeys;
+import frc.robot.Constants.DashboardConstants.ElevatorKeys;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.TestConstants;
+import frc.robot.commands.Climb;
 import frc.robot.commands.DriveWithGamepad;
+import frc.robot.commands.MoveElevatorToPosition;
+import frc.robot.commands.MoveElevatorWithGamepad;
+import frc.robot.commands.test.TestCoralManipulator;
 import frc.robot.commands.test.TestDriveTrain;
+import frc.robot.commands.test.TestElevator;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.CoralManipulator;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Elevator;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -31,21 +46,23 @@ public class RobotContainer
 {
     // Subsystems:
     private final Optional<DriveTrain> driveTrain;
+    private final Optional<Climber> climber;
+    private final Optional<CoralManipulator> coralManipulator;
+    private final Optional<Elevator> elevator;
 
-   // OI devices:
+    // OI devices:
+
     private final XboxController driverGamepad;
     private final XboxController codriverGamepad;
+    private final CommandXboxController commandCodriverGamepad;
 
     SendableChooser<Boolean> driveOrientationChooser = new SendableChooser<>();
     SendableChooser<Command> autoChooser = new SendableChooser<>();
 
-    
-
-
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer()
     {
-         // Get the game data message fom the driver station.
+        // Get the game data message fom the driver station.
         // This message is primarily used during development to
         // construct only certain subsystems.
         // If the message is blank (or all whitespace),
@@ -53,11 +70,14 @@ public class RobotContainer
         // Otherwise, OI devices and subsystems are constructed
         // depending upon the substrings found in the message:
         // -dt- Drive train
-        
+        // -oi- OI devices
+        // -cl- Climber
+        // -cm- Coral manipulator
+        // -e- Elevator
+
         var gameData = DriverStation.getGameSpecificMessage().toLowerCase();
         SmartDashboard.putString("Game Data", gameData);
 
-        
         // Create OI devices:
         if (gameData.contains("-oi-"))
         {
@@ -68,30 +88,46 @@ public class RobotContainer
             codriverGamepad = DriverStation.isJoystickConnected(OperatorConstants.codriverGamepadPort)
                 ? new XboxController(OperatorConstants.codriverGamepadPort)
                 : null;
+            commandCodriverGamepad = DriverStation.isJoystickConnected(OperatorConstants.codriverGamepadPort)
+                ? new CommandXboxController(OperatorConstants.codriverGamepadPort)
+                : null;
         }
         else
         {
             // In competition, don't take chances and always create all OI devices:
+            commandCodriverGamepad = new CommandXboxController(OperatorConstants.codriverGamepadPort);
             codriverGamepad = new XboxController(OperatorConstants.codriverGamepadPort);
             driverGamepad = new XboxController(OperatorConstants.driverGamepadPort);
         }
 
-         // Create subsystems:
-         driveTrain = gameData.isBlank() || gameData.contains("-dt-")
-             ? Optional.of(new DriveTrain())
-             : Optional.empty();
+        // Create subsystems:
+        driveTrain = gameData.isBlank() || gameData.contains("-dt-")
+            ? Optional.of(new DriveTrain())
+            : Optional.empty();
 
-         // Configure commands for Path Planner:
-         configurePathPlannerNamedCommands();
+        climber = gameData.isBlank() || gameData.contains("-cl-")
+            ? Optional.of(new Climber())
+            : Optional.empty();
 
-         // Configure default commands
-         configureDefaultCommands();
- 
-         // Configure the trigger bindings
-         configureBindings();
- 
-         // Configure smart dashboard
-         configureSmartDashboard();
+        coralManipulator = gameData.isBlank() || gameData.contains("-cm-")
+            ? Optional.of(new CoralManipulator())
+            : Optional.empty();
+
+        elevator = gameData.isBlank() || gameData.contains("-e-")
+            ? Optional.of(new Elevator())
+            : Optional.empty();
+
+        // Configure commands for Path Planner:
+        configurePathPlannerNamedCommands();
+
+        // Configure default commands
+        configureDefaultCommands();
+
+        // Configure the trigger bindings
+        configureBindings();
+
+        // Configure smart dashboard
+        configureSmartDashboard();
     }
 
     /**
@@ -99,7 +135,7 @@ public class RobotContainer
      */
     private void configurePathPlannerNamedCommands()
     {
-       // EX:  NamedCommands.registerCommand("Shoot Wait", new Wait(AutoKeys.shootWaitTime));
+        // EX: NamedCommands.registerCommand("Shoot Wait", new Wait(AutoKeys.shootWaitTime));
     }
 
     /**
@@ -127,25 +163,84 @@ public class RobotContainer
      */
     private void configureBindings()
     {
-        // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
+        climber.ifPresent(this::configureBindings);
+        coralManipulator.ifPresent(this::configureBindings);
+        elevator.ifPresent(this::configureBindings);
+    }
 
+    private void configureBindings(CoralManipulator coralManipulator)
+    {
+        if (commandCodriverGamepad == null)
+        {
+            return;
+        }
 
-        // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-        // cancelling on release.
+        commandCodriverGamepad.leftBumper()
+            .onTrue(new InstantCommand(() -> coralManipulator.intakeCoral(CoralManipulatorKeys.rollerMotorSpeedKey)));
 
+        commandCodriverGamepad.rightBumper()
+            .onTrue(new InstantCommand(() -> coralManipulator.ejectCoral(CoralManipulatorKeys.rollerMotorSpeedKey,
+                CoralManipulatorKeys.extraTimeSecsKey)));
+    }
+
+    private void configureBindings(Climber climber)
+    {
+        if (commandCodriverGamepad == null || codriverGamepad == null)
+        {
+            return;
+        }
+
+        // TODO: Need to move coral trey out of the way before climbing,
+        // but don't want to make moving the coral tray part of the whileTrue().
+        commandCodriverGamepad.start().and(commandCodriverGamepad.back())
+            .whileTrue(new Climb(climber, ClimberKeys.winchMotorSpeedKey, codriverGamepad));
+    }
+
+    private void configureBindings(Elevator elevator)
+    {
+        if (commandCodriverGamepad == null || codriverGamepad == null)
+        {
+            return;
+        }
+        commandCodriverGamepad.rightStick()
+            .onTrue(new MoveElevatorWithGamepad(elevator, codriverGamepad));
+
+        commandCodriverGamepad.a().onTrue(new MoveElevatorToPosition(elevator, codriverGamepad, ElevatorKeys.toleranceKey));
     }
 
     private void configureSmartDashboard()
     {
         driveTrain.ifPresent(this::configureSmartDashboard);
+        climber.ifPresent(this::configureSmartDashboard);
+        coralManipulator.ifPresent(this::configureSmartDashboard);
+        elevator.ifPresent(this::configureSmartDashboard);
 
         // Configure chooser widgets:
         configureDriveOrientationChooser(driveOrientationChooser);
-
     }
 
     private void configureSmartDashboard(DriveTrain driveTrain)
     {
+    }
+
+    private void configureSmartDashboard(Climber climber)
+    {
+        SmartDashboard.putNumber(ClimberKeys.winchMotorSpeedKey, ClimberConstants.winchMotorSpeed);
+
+    }
+
+    private void configureSmartDashboard(CoralManipulator coralManipulator)
+    {
+        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorSpeedKey, CoralManipulatorConstants.rollerMotorSpeed);
+        SmartDashboard.putNumber(CoralManipulatorKeys.opticalSensorVoltageThresholdKey,
+            CoralManipulatorConstants.opticalSensorVoltageThreshold);
+        SmartDashboard.putNumber(CoralManipulatorKeys.extraTimeSecsKey, CoralManipulatorConstants.extraTimeSecs);
+    }
+
+    private void configureSmartDashboard(Elevator elevator)
+    {
+        SmartDashboard.putNumber(ElevatorKeys.toleranceKey, ElevatorConstants.PIDConstants.tolerance);
+
     }
 
     private void configureDriveOrientationChooser(SendableChooser<Boolean> driveOrientationChooser)
@@ -162,20 +257,30 @@ public class RobotContainer
      */
     public Command getAutonomousCommand()
     {
-        // An example command will be run in autonomous
         return null;
     }
 
-     /**
+    /**
      * Builds a command to run when Test mode is enabled in the Driver Station.
      */
     public Command getTestCommand()
     {
         var group = new SequentialCommandGroup();
 
+        group.addCommands(new WaitCommand(5));
+
         if (driveTrain.isPresent())
         {
             group.addCommands(new TestDriveTrain(driveTrain.get()));
+        };
+        if (elevator.isPresent())
+        {
+            group.addCommands(new TestElevator(elevator.get()));
+        }
+        if (coralManipulator.isPresent())
+        {
+            group.addCommands(new TestCoralManipulator(coralManipulator.get(), CoralManipulatorKeys.rollerMotorSpeedKey)
+                .withTimeout((TestConstants.coralManipulatorTimeoutSecs)));
         }
 
         return group;
