@@ -4,9 +4,7 @@
 
 package frc.robot.commands.test;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.CoralManipulatorConstants;
 import frc.robot.subsystems.CoralManipulator;
 
 /**
@@ -15,15 +13,14 @@ import frc.robot.subsystems.CoralManipulator;
 public class TestCoralManipulator extends Command
 {
     private final CoralManipulator coralManipulator;
-    private final String speedKey;
     private double speed;
 
     /** Creates a new TestCoralManipulator. */
-    public TestCoralManipulator(CoralManipulator coralManipulator, String speedKey)
+    public TestCoralManipulator(CoralManipulator coralManipulator, double speed)
     {
         // Use addRequirements() here to declare subsystem dependencies.
         this.coralManipulator = coralManipulator;
-        this.speedKey = speedKey;
+        this.speed = speed;
         addRequirements(coralManipulator);
     }
 
@@ -31,8 +28,7 @@ public class TestCoralManipulator extends Command
     @Override
     public void initialize()
     {
-        speed = SmartDashboard.getNumber(speedKey, CoralManipulatorConstants.rollerMotorSpeed);
-        System.out.println("Testing Coral Manipulator");
+        System.out.println("Testing Coral Manipulator: " + speed);
     }
 
     // Called every time the scheduler runs while the command is scheduled.

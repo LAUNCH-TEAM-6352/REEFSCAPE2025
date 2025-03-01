@@ -58,14 +58,20 @@ public final class Constants
     {
         public static final int leftRollerMotorChannel = 41;
         public static final int rightRollerMotorChannel = 42;
+
         public static final IdleMode motorIdleMode = IdleMode.kBrake;
-        public static final double rollerMotorSpeed = .5;
-        public static final int entranceOpticalSensorPort = 1;
-        public static final int exitOpticalSensorPort = 0;
+
+        public static final double rollerMotorIntakeSpeed = 0.15;
+        public static final double rollerMotorBackupSpeed = -0.2;
+        public static final double rollerMotorEjectSpeed = 0.3;
+        public static final double extraTimeSecs = 1.0;
+
+        public static final int entranceOpticalSensorPort = 0;
+        public static final int exitOpticalSensorPort = 1;
+        public static final double opticalSensorVoltageThreshold = 0.8;
+
         public static final boolean isLeftRollerMotorInverted = false;
         public static final boolean isRightRollerMotorInverted = false;
-        public static final double opticalSensorVoltageThreshold = 0.8;
-        public static final double extraTimeSecs = 2;
     }
 
     public static class CoralReceiverConstants
@@ -98,7 +104,9 @@ public final class Constants
 
         public static final class CoralManipulatorKeys
         {
-            public static final String rollerMotorSpeedKey = "Coral Roller Speed";
+            public static final String rollerMotorIntakeSpeedKey = "Coral Intk Spd";
+            public static final String rollerMotorBackupSpeedKey = "Coral Bckp Spd";
+            public static final String rollerMotorEjectSpeedKey = "Coral Ejct Spd";
             public static final String opticalSensorVoltageThresholdKey = "Optical Sensor";
             public static final String extraTimeSecsKey = "Extra Time";
         }
@@ -106,7 +114,7 @@ public final class Constants
         {
             public static final String minOutputKey = "Min Output";
             public static final String maxOutputKey = "Max Output";
-            public static final String toleranceKey = "Tolerance"; 
+            public static final String toleranceKey = "Elev Tolerance"; 
             
         }
     }
@@ -118,40 +126,42 @@ public final class Constants
 
     public static final class ElevatorConstants
     {
-        public static final int leftMotorChannel = 43;
-        public static final int rightMotorChannel = 44;
+        public static final int leftMotorChannel = 44;
+        public static final int rightMotorChannel = 43;
         public static final boolean isLeftMotorInverted = false;
         public static final boolean isRightMotorInverted = true;
 
         public static final IdleMode motorIdleMode = IdleMode.kBrake;
-        public static final double maxManualMotorSpeed = 0.5; // For manual positioning
+        public static final double maxManualMotorSpeed = 0.3;
 
         public static final double minPosition = 0;
-        public static final double maxPosition = 100;
+        public static final double maxPosition = 60;
 
 
         public static final class AlternateEncoderConstants
         {
             public static final int countsPerRevolution = 8192;
             public static final boolean isInverted = true; // by default, cw rotation is negative
-            public static final double positionConversionFactor = 1; // One position per rotation
+            public static final double positionConversionFactor = 10; // One position per rotation
             public static final double velocityConversionFactor = 1; // Rotations per minute
         }
 
         public enum CoralLevel
         {
-            Intake(0), Reef1(1), Reef2(2), Reef3(3), Reef4(4);
+            Intake(0.0),
+            Reef1(10.0),
+            Reef2(19.5),
+            Reef3(34.0),
+            Reef4(53.0);
 
-            private final int elevatorPosition;
+            private final double elevatorPosition;
 
-            CoralLevel(int elevatorPosition)
+            CoralLevel(double elevatorPosition)
             {
                 this.elevatorPosition = elevatorPosition;
             }
 
-
-
-            public int elevatorPosition()
+            public double elevatorPosition()
             {
                 return elevatorPosition;
             }
@@ -161,12 +171,12 @@ public final class Constants
         {
             public static final double kP = 0.15;
             public static final double kI = 0.0;
-            public static final double kD = 1.0;
+            public static final double kD = 0.0;
             public static final int kIZ = 0;
             public static final double kFF = 0;
             public static final double minOutput = -0.25;
             public static final double maxOutput = 0.25;
-            public static final double tolerance = 5;
+            public static final double tolerance = 0.5;
         }
     }
 

@@ -176,11 +176,10 @@ public class RobotContainer
         }
 
         commandCodriverGamepad.leftBumper()
-            .onTrue(new InstantCommand(() -> coralManipulator.intakeCoral(CoralManipulatorKeys.rollerMotorSpeedKey)));
+            .onTrue(new InstantCommand(() -> coralManipulator.intakeCoral()));
 
         commandCodriverGamepad.rightBumper()
-            .onTrue(new InstantCommand(() -> coralManipulator.ejectCoral(CoralManipulatorKeys.rollerMotorSpeedKey,
-                CoralManipulatorKeys.extraTimeSecsKey)));
+            .onTrue(new InstantCommand(() -> coralManipulator.ejectCoral()));
     }
 
     private void configureBindings(Climber climber)
@@ -231,7 +230,9 @@ public class RobotContainer
 
     private void configureSmartDashboard(CoralManipulator coralManipulator)
     {
-        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorSpeedKey, CoralManipulatorConstants.rollerMotorSpeed);
+        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorIntakeSpeedKey, CoralManipulatorConstants.rollerMotorIntakeSpeed);
+        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorBackupSpeedKey, CoralManipulatorConstants.rollerMotorBackupSpeed);
+        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey, CoralManipulatorConstants.rollerMotorEjectSpeed);
         SmartDashboard.putNumber(CoralManipulatorKeys.opticalSensorVoltageThresholdKey,
             CoralManipulatorConstants.opticalSensorVoltageThreshold);
         SmartDashboard.putNumber(CoralManipulatorKeys.extraTimeSecsKey, CoralManipulatorConstants.extraTimeSecs);
@@ -279,8 +280,18 @@ public class RobotContainer
         }
         if (coralManipulator.isPresent())
         {
-            group.addCommands(new TestCoralManipulator(coralManipulator.get(), CoralManipulatorKeys.rollerMotorSpeedKey)
-                .withTimeout((TestConstants.coralManipulatorTimeoutSecs)));
+            group.addCommands(
+                new TestCoralManipulator(coralManipulator.get(), 
+                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorIntakeSpeedKey, CoralManipulatorConstants.rollerMotorIntakeSpeed))
+                    .withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
+
+                new TestCoralManipulator(coralManipulator.get(), 
+                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorBackupSpeedKey, CoralManipulatorConstants.rollerMotorBackupSpeed))
+                    .withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
+                    
+                new TestCoralManipulator(coralManipulator.get(), 
+                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey, CoralManipulatorConstants.rollerMotorEjectSpeed))
+                    .withTimeout((TestConstants.coralManipulatorTimeoutSecs)));
         }
 
         return group;

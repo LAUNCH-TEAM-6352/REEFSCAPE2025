@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants.CoralManipulatorConstants;
+import frc.robot.Constants.DashboardConstants.CoralManipulatorKeys;
+
 import com.revrobotics.spark.SparkBase.ResetMode;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -23,10 +25,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class CoralManipulator extends SubsystemBase
 {
+    private enum RollerState
+    {
+        IDLE, INTAKE, BACKUP, EJECT, EXTRA_TIME
+    }
+
+    private RollerState rollerState = RollerState.IDLE;
+
     private double extraTimeSecs;
-    private boolean isIntaking = false;
-    private boolean isEjecting = false;
-    private boolean inExtraTime = false;
+
     private long stopExtraTime;
 
     private final SparkMax leftRollerMotor = new SparkMax(CoralManipulatorConstants.leftRollerMotorChannel,
@@ -72,7 +79,7 @@ public class CoralManipulator extends SubsystemBase
 
     public void stop()
     {
-        leftRollerMotor.stopMotor();
+        setRollerSpeed(0);
     }
 
     private boolean isEntranceBlocked()
@@ -92,57 +99,73 @@ public class CoralManipulator extends SubsystemBase
         return !isEntranceBlocked() && isExitBlocked();
     }
 
+    private boolean isCoralBackedUp()
+    {
+        return isEntranceBlocked() && isExitBlocked();
+    }
+
     private boolean isCoralPartiallyOut()
     {
         return !isEntranceBlocked() && !isExitBlocked();
     }
 
-    public void intakeCoral(String speedKey)
+    public void intakeCoral()
     {
-        isIntaking = true;
-        setRollerSpeed(SmartDashboard.getNumber(speedKey, CoralManipulatorConstants.rollerMotorSpeed));
+        rollerState = RollerState.INTAKE;
+        setRollerSpeed(SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorIntakeSpeedKey, CoralManipulatorConstants.rollerMotorIntakeSpeed));
     }
 
-    public void ejectCoral(String speedKey, String extraTimeKey)
+    public void ejectCoral()
     {
-        isEjecting = true;
-        inExtraTime = false;
-        setRollerSpeed(SmartDashboard.getNumber(speedKey, CoralManipulatorConstants.rollerMotorSpeed));
-        extraTimeSecs = SmartDashboard.getNumber(extraTimeKey, CoralManipulatorConstants.extraTimeSecs);
+        rollerState = RollerState.EJECT;
+        setRollerSpeed(SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey, CoralManipulatorConstants.rollerMotorEjectSpeed));
+        extraTimeSecs = SmartDashboard.getNumber(CoralManipulatorKeys.extraTimeSecsKey, CoralManipulatorConstants.extraTimeSecs);
     }
 
     @Override
     public void periodic()
     {
         // This method will be called once per scheduler run
-        SmartDashboard.putNumber("Coral Roller RPM", leftRollerMotor.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Coral RPM", leftRollerMotor.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Coral Spd", leftRollerMotor.getAppliedOutput());
         SmartDashboard.putBoolean("Coral Entrance", !isEntranceBlocked());
         SmartDashboard.putBoolean("Coral Exit", !isExitBlocked());
 
-        if (isIntaking)
+        switch (rollerState)
         {
-            if (isCoralIn())
-            {
-                stop();
-                isIntaking = false;
-            }
-        }
-        else if (isEjecting)
-        {
-            if (isCoralPartiallyOut())
-            {
-                if (!inExtraTime)
+            case INTAKE:
+                if (isCoralIn())
                 {
-                    inExtraTime = true;
-                    stopExtraTime = RobotController.getFPGATime() + (long) (extraTimeSecs * 1e6);
+                    setRollerSpeed(SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorBackupSpeedKey, CoralManipulatorConstants.rollerMotorBackupSpeed));
+                    rollerState = RollerState.BACKUP;
                 }
-                else if (RobotController.getFPGATime() >= stopExtraTime)
+                break;
+
+            case BACKUP:
+                if (isCoralBackedUp())
                 {
                     stop();
-                    isEjecting = false;
-                    inExtraTime = false;
+                    rollerState = RollerState.IDLE;
                 }
-            }
+                break;
+
+            case EJECT:
+                if (isCoralPartiallyOut())
+                {
+                    stopExtraTime = RobotController.getFPGATime() + (long) (extraTimeSecs * 1e6);
+                    rollerState = RollerState.EXTRA_TIME;
+                }
+                break;
+
+            case EXTRA_TIME:
+                if (RobotController.getFPGATime() >= stopExtraTime)
+                {
+                    stop();
+                    rollerState = RollerState.IDLE;
+                }
+
+            default:
+                break;
         }
     }
 }
