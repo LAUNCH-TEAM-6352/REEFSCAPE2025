@@ -15,6 +15,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AlgaeConstants;
 
+/**
+ * A subsystem for the Algae Manipulator.
+ */
 public class AlgaeManipulator extends SubsystemBase
 {
     private final SparkMax pivotMotor = new SparkMax(AlgaeConstants.pivotMotorChannel, MotorType.kBrushless);

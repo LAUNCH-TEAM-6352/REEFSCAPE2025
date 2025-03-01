@@ -21,6 +21,9 @@ import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 
+/**
+ * A subsystem for the robot's drive train.
+ */
 public class DriveTrain extends SubsystemBase 
 {
     public SwerveDrive swerveDrive;

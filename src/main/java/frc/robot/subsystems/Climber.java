@@ -17,6 +17,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.ClimberConstants.EncoderConstants;
 
+/**
+ * A subsytem for the Climber.
+ */
 public class Climber extends SubsystemBase
 {
     private final SparkMax winchMotor = new SparkMax(ClimberConstants.winchMotorChannel, MotorType.kBrushed);

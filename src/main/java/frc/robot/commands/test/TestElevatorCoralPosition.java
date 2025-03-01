@@ -10,7 +10,9 @@ import frc.robot.Constants.ElevatorConstants.CoralLevel;
 import frc.robot.Constants.ElevatorConstants.PIDConstants;
 import frc.robot.subsystems.Elevator;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/**
+ * Tests pre-defined elevator positions for dealing with coral.
+ */
 public class TestElevatorCoralPosition extends Command
 {
 
@@ -33,7 +35,7 @@ public class TestElevatorCoralPosition extends Command
     public void initialize()
     {
         var tolerance = SmartDashboard.getNumber(toleranceKey, PIDConstants.tolerance);
-        System.out.println("Running Elevator Position: " + coralLevel);
+        System.out.println("Testing Elevator Position: " + coralLevel);
         elevator.setPosition(coralLevel.elevatorPosition(), tolerance);
     }
 

@@ -18,8 +18,10 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * A subsytem for receiving and ejecting coral.
+ */
 public class CoralManipulator extends SubsystemBase
-
 {
     private double extraTimeSecs;
     private boolean isIntaking = false;
@@ -99,7 +101,6 @@ public class CoralManipulator extends SubsystemBase
     {
         isIntaking = true;
         setRollerSpeed(SmartDashboard.getNumber(speedKey, CoralManipulatorConstants.rollerMotorSpeed));
-
     }
 
     public void ejectCoral(String speedKey, String extraTimeKey)

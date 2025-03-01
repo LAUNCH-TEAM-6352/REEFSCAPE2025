@@ -17,12 +17,20 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralReceiverConstants;
 import frc.robot.Constants.ElevatorConstants.PIDConstants;
 
+/**
+ * A subsystem for the Coral Receiver tray.
+ */
 public class CoralReceiver extends SubsystemBase
 {
+    @SuppressWarnings("unused")
     private double targetPosition;
+    @SuppressWarnings("unused")
     private double targetTolerance;
+    @SuppressWarnings("unused")
     private boolean atTargetPosition;
+    @SuppressWarnings("unused")
     private boolean isPositioningStarted;
+    @SuppressWarnings("unused")
     private double lastPosition;
 
     private final SparkMax motor = new SparkMax(CoralReceiverConstants.motorChannel,
@@ -42,9 +50,9 @@ public class CoralReceiver extends SubsystemBase
             .idleMode(CoralReceiverConstants.motorIdleMode)
             .inverted(CoralReceiverConstants.isMotorInverted);
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor.clearFaults();
+
         resetPosition();
-
-
     }
 
     private void resetPosition()
@@ -52,9 +60,23 @@ public class CoralReceiver extends SubsystemBase
         motor.getEncoder().setPosition(0);
     }
 
-    
+    /**
+     *  Move the receiver trqy to the up position.
+     */
+    public void moveUp()
+    {
 
+    }
 
+    /**
+     * Move the receiver trqy to the down position.
+     * 
+     * TODO: Do we really need this?
+     */
+    public void moveDown()
+    {
+
+    }
 
     @Override
     public void periodic()

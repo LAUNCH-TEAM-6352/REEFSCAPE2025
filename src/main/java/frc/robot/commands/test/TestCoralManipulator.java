@@ -9,7 +9,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.CoralManipulatorConstants;
 import frc.robot.subsystems.CoralManipulator;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/**
+ * Tests the CoralManipulator subsystem.
+ */
 public class TestCoralManipulator extends Command
 {
     private final CoralManipulator coralManipulator;
