@@ -9,8 +9,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ElevatorConstants.PIDConstants;
 import frc.robot.subsystems.Elevator;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class TestElevatorRawPosition extends Command
+/**
+ * Tests an arbitrary elevator position.
+ */
+public class TestElevatorArbitraryPosition extends Command
 {
 
     private final Elevator elevator;
@@ -18,7 +20,7 @@ public class TestElevatorRawPosition extends Command
     private final String toleranceKey;
 
     /** Creates a new TestElevatorPosition. */
-    public TestElevatorRawPosition(Elevator elevator, double position, String toleranceKey)
+    public TestElevatorArbitraryPosition(Elevator elevator, double position, String toleranceKey)
     {
         // Use addRequirements() here to declare subsystem dependencies.
         this.position = position;
@@ -32,7 +34,7 @@ public class TestElevatorRawPosition extends Command
     public void initialize()
     {
         var tolerance = SmartDashboard.getNumber(toleranceKey, PIDConstants.tolerance);
-        System.out.println("Running Elevator Position: " +  position);
+        System.out.println("Testing Elevator Position: " +  position);
         elevator.setPosition(position, tolerance);
     }
 

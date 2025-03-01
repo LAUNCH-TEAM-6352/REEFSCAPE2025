@@ -11,7 +11,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.subsystems.Climber;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/*
+ * A command for climbing.
+ * 
+ * TODO: Do we need to add a command for un-climbing?
+ */
 public class Climb extends Command
 {
     private final Climber climber;
@@ -33,7 +37,7 @@ public class Climb extends Command
     @Override
     public void initialize()
     {
-        // Move Coral Reciever system out of the way
+        // TODO: Determine if the coral receiver tray needs to be moved out of the way.
         speed = SmartDashboard.getNumber(speedKey, ClimberConstants.winchMotorSpeed);
     }
 

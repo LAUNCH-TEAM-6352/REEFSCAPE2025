@@ -10,7 +10,7 @@ import frc.robot.Constants.TestConstants;
 import frc.robot.subsystems.DriveTrain;
 
 /**
- * Tests a swerve drive moduile.
+ * Tests the drive and steer motors of a swerve drive moduile.
  */
 public class TestSwerveDriveModule extends SequentialCommandGroup
 {

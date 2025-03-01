@@ -12,6 +12,9 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.DriveTrain;
 
+/**
+ * A command that allows the robot to be driven with a gamepad.
+ */
 public class DriveWithGamepad extends Command
 {
     private final DriveTrain DriveTrain;

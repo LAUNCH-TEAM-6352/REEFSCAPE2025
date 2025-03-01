@@ -13,7 +13,9 @@ import frc.robot.Constants.ElevatorConstants.CoralLevel;
 import frc.robot.Constants.ElevatorConstants.PIDConstants;
 import frc.robot.subsystems.Elevator;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/**
+ * A command that moves the elevator to a pre-defined position based upon gamepad input.
+ */
 public class MoveElevatorToPosition extends Command
 {
     private final Elevator elevator;
@@ -30,7 +32,9 @@ public class MoveElevatorToPosition extends Command
         }
     };
 
-    /** Creates a new MoveElevator. */
+    /**
+     * Constructor.
+     */
     public MoveElevatorToPosition(Elevator elevator, XboxController gamepad, String toleranceKey)
     {
         this.toleranceKey = toleranceKey;

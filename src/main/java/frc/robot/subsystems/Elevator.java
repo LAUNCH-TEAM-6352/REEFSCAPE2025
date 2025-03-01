@@ -22,6 +22,9 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.ElevatorConstants.PIDConstants;
 import frc.robot.Constants.ElevatorConstants.AlternateEncoderConstants;
 
+/**
+ * A subsystem for the Elevator.
+ */
 public class Elevator extends SubsystemBase
 {
 

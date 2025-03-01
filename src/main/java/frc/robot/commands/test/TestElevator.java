@@ -11,7 +11,9 @@ import frc.robot.Constants.ElevatorConstants.CoralLevel;
 import frc.robot.Constants.TestConstants;
 import frc.robot.subsystems.Elevator;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/**
+ * Tests multiple elevator positions.
+ */
 public class TestElevator extends SequentialCommandGroup
 {
     /** Creates a new TestElevator. */
@@ -33,7 +35,10 @@ public class TestElevator extends SequentialCommandGroup
             new TestElevatorCoralPosition(elevator, CoralLevel.Reef4, ElevatorKeys.toleranceKey),
             new WaitCommand(TestConstants.inbetweenTimeSecs),
 
-            new TestElevatorRawPosition(elevator, ElevatorConstants.minPosition, ElevatorKeys.toleranceKey),
+            new TestElevatorArbitraryPosition(elevator, ElevatorConstants.maxPosition, ElevatorKeys.toleranceKey),
+            new WaitCommand(TestConstants.inbetweenTimeSecs),
+
+            new TestElevatorArbitraryPosition(elevator, ElevatorConstants.minPosition, ElevatorKeys.toleranceKey),
             new WaitCommand(TestConstants.inbetweenTimeSecs)
         );
     }
