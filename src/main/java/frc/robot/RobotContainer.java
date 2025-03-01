@@ -33,6 +33,7 @@ import frc.robot.commands.test.TestDriveTrain;
 import frc.robot.commands.test.TestElevator;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralManipulator;
+import frc.robot.subsystems.CoralReceiver;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Elevator;
 
@@ -49,6 +50,7 @@ public class RobotContainer
     private final Optional<Climber> climber;
     private final Optional<CoralManipulator> coralManipulator;
     private final Optional<Elevator> elevator;
+    private final Optional <CoralReceiver> coralReceiver;
 
     // OI devices:
 
@@ -74,6 +76,7 @@ public class RobotContainer
         // -cl- Climber
         // -cm- Coral manipulator
         // -e- Elevator
+        // -cr- Coral receiver
 
         var gameData = DriverStation.getGameSpecificMessage().toLowerCase();
         SmartDashboard.putString("Game Data", gameData);
@@ -115,6 +118,10 @@ public class RobotContainer
 
         elevator = gameData.isBlank() || gameData.contains("-e-")
             ? Optional.of(new Elevator())
+            : Optional.empty();
+
+        coralReceiver = gameData.isBlank() || gameData.contains("-cr-")
+            ? Optional.of(new CoralReceiver())
             : Optional.empty();
 
         // Configure commands for Path Planner:
@@ -166,6 +173,7 @@ public class RobotContainer
         climber.ifPresent(this::configureBindings);
         coralManipulator.ifPresent(this::configureBindings);
         elevator.ifPresent(this::configureBindings);
+        coralReceiver.ifPresent(this::configureBindings);
     }
 
     private void configureBindings(CoralManipulator coralManipulator)
@@ -181,6 +189,18 @@ public class RobotContainer
         commandCodriverGamepad.rightBumper()
             .onTrue(new InstantCommand(() -> coralManipulator.ejectCoral()));
     }
+
+    private void configureBindings(CoralReceiver coralReceiver)
+    {
+        if (commandCodriverGamepad == null)
+        {
+            return;
+        }
+
+        commandCodriverGamepad.rightTrigger()
+            .onTrue(new InstantCommand(() -> coralReceiver.moveUp()));
+    }
+
 
     private void configureBindings(Climber climber)
     {

@@ -39,9 +39,9 @@ public final class Constants
     {
         public static final int winchMotorChannel = 47;
         public static final IdleMode motorIdleMode = IdleMode.kBrake;
-        public static final double winchMotorSpeed = 0.2;
+        public static final double winchMotorSpeed = 0.6;
         public static final boolean isMotorInverted = false;
-        public static final double maxPosition = 1000;
+        public static final double maxPosition = 108;
         public static final double minPosition = 0;
 
         public static class EncoderConstants
@@ -79,18 +79,18 @@ public final class Constants
         public static final int motorChannel = 48;
         public static final IdleMode motorIdleMode = IdleMode.kBrake;
         public static final boolean isMotorInverted = false;
-        public static final double maxPosition = 1000;
+        public static final double maxPosition = 12.5;
         public static final double minPosition = 0;
 
         public static final class PIDConstants
         {
             public static final double kP = 0.15;
             public static final double kI = 0.0;
-            public static final double kD = 1.0;
+            public static final double kD = 0.0;
             public static final int kIZ = 0;
             public static final double kFF = 0;
-            public static final double minOutput = -0.25;
-            public static final double maxOutput = 0.25;
+            public static final double minOutput = -0.08;
+            public static final double maxOutput = 0.08;
             public static final double tolerance = 5;
         }
     }
