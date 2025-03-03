@@ -8,7 +8,11 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -17,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PathPlannerConstants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.LimelightHelpers;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -66,6 +71,16 @@ public class DriveTrain extends SubsystemBase
         swerveDrive.drive(velocity);
     }
 
+    /*  may need to use the following
+    public void driveToPosition(Pose2d pose, double tolerance)
+    {
+        targetPosition = pose;
+        targetTolerance = tolerance;
+        lastPosition = getPose();
+        swerveDrive.drive();
+    }
+    */
+
     public void setupPathPlanner()
     {
         RobotConfig config = null;
@@ -113,6 +128,14 @@ public class DriveTrain extends SubsystemBase
     public Pose2d getPose()
     {
         return swerveDrive.getPose();
+    }
+    public Pose2d getTargetPose(double offsetDistance) {
+        double[] botPose = LimelightHelpers.getBotPose_wpiBlue("limelight");
+        if (botPose == null) return null;
+        Pose3d tagPose = new Pose3d(botPose[0], botPose[1], botPose[2], new Rotation3d(botPose[3], botPose[4], botPose[5]));
+        Translation3d offset = new Translation3d(offsetDistance, 0.0, 0.0);
+        Pose3d targetPose = tagPose.transformBy(new Transform3d(offset, new Rotation3d()));
+        return targetPose.toPose2d();
     }
 
     /**
