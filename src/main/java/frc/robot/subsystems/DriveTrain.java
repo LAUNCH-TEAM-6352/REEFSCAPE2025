@@ -150,4 +150,14 @@ public class DriveTrain extends SubsystemBase
     {
         swerveDrive.setChassisSpeeds(chassisSpeeds);
     }
+
+    @Override
+    public void periodic()
+    {
+        // This method will be called once per scheduler run
+        SmartDashboard.putNumber("BL Steer Vel", swerveDrive.getModuleMap().get("backleft").getAngleMotor().getVelocity());
+        SmartDashboard.putNumber("BR Steer Vel", swerveDrive.getModuleMap().get("backright").getAngleMotor().getVelocity());
+        SmartDashboard.putNumber("FR Steer Vel", swerveDrive.getModuleMap().get("frontright").getAngleMotor().getVelocity());
+        SmartDashboard.putNumber("FL Steer Vel", swerveDrive.getModuleMap().get("frontleft").getAngleMotor().getVelocity());
+    }
 }
