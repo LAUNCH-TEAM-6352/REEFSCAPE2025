@@ -7,6 +7,8 @@ package frc.robot;
 import com.pathplanner.lib.config.PIDConstants;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 /**
@@ -32,7 +34,7 @@ public final class Constants
         public static final double rollerMotorIntakeSpeed = .5;
         public static final double rollerMotorEjectSpeed = -.5;
         public static final IdleMode rollerMotorIdleMode = IdleMode.kBrake;
-        public static final boolean isRollerMotorInverted = false; 
+        public static final boolean isRollerMotorInverted = false;
     }
 
     public static class ClimberConstants
@@ -110,18 +112,25 @@ public final class Constants
             public static final String opticalSensorVoltageThresholdKey = "Optical Sensor";
             public static final String extraTimeSecsKey = "Extra Time";
         }
+
         public static final class ElevatorKeys
         {
             public static final String minOutputKey = "Min Output";
             public static final String maxOutputKey = "Max Output";
-            public static final String toleranceKey = "Elev Tolerance"; 
-            
+            public static final String toleranceKey = "Elev Tolerance";
+
         }
     }
 
     public static class DriveConstants
     {
         public static final TelemetryVerbosity swerveDriveTelemetryVerbosity = TelemetryVerbosity.HIGH;
+
+        public static final double maxSpeedMps = 5.0;
+        public static final double maxAccelerationMps = 2.0;
+        public static final double approachSpeed = 0.0;
+        public static final double targetOffset = 0.0;
+        public static final Transform2d tolerance = new Transform2d(1.0, 1.0, new Rotation2d(0.0));
     }
 
     public static final class ElevatorConstants
@@ -137,7 +146,6 @@ public final class Constants
         public static final double minPosition = 0;
         public static final double maxPosition = 60;
 
-
         public static final class AlternateEncoderConstants
         {
             public static final int countsPerRevolution = 8192;
@@ -148,10 +156,10 @@ public final class Constants
 
         public enum CoralLevel
         {
-            Intake(0.0),
-            Reef1(10.0),
-            Reef2(19.5),
-            Reef3(34.0),
+            Intake(0.0), 
+            Reef1(10.0), 
+            Reef2(19.5), 
+            Reef3(34.0), 
             Reef4(53.0);
 
             private final double elevatorPosition;

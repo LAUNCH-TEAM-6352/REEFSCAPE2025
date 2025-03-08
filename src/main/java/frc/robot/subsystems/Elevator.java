@@ -49,7 +49,7 @@ public class Elevator extends SubsystemBase
         AlternateEncoderConfig encoderConfig = new AlternateEncoderConfig()
             .averageDepth(64)
             .countsPerRevolution(AlternateEncoderConstants.countsPerRevolution)
-            .inverted(AlternateEncoderConstants.isInverted) 
+            .inverted(AlternateEncoderConstants.isInverted)
             .measurementPeriod(100)
             .positionConversionFactor(AlternateEncoderConstants.positionConversionFactor)
             .setSparkMaxDataPortConfig()
@@ -83,7 +83,8 @@ public class Elevator extends SubsystemBase
             }
             else
             {
-                config.follow(leaderMotor.getDeviceId(), ElevatorConstants.isLeftMotorInverted != ElevatorConstants.isRightMotorInverted);
+                config.follow(leaderMotor.getDeviceId(),
+                    ElevatorConstants.isLeftMotorInverted != ElevatorConstants.isRightMotorInverted);
             }
             motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
             motor.clearFaults();

@@ -1,6 +1,13 @@
 package frc.robot.subsystems;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.LimelightHelpers;
 
 public class LimelightSubsystem extends SubsystemBase
@@ -9,6 +16,12 @@ public class LimelightSubsystem extends SubsystemBase
     public static final double kMaxSpeed = 0.30;
     public static final double kMaxAngularSpeed = Math.PI * 0.2;
     public static final double targetArea = 25;
+
+    public boolean isTargetingStarted;
+    public Pose2d targetPosition;
+    public Transform2d tolerance = DriveConstants.tolerance;
+    public Pose2d lastPosition;
+    public boolean atTargetPosition;
 
     public LimelightSubsystem()
     {
@@ -39,25 +52,8 @@ public class LimelightSubsystem extends SubsystemBase
         return LimelightHelpers.getTA("limelight");
     }
 
-    /*
-     * public double limelight_aim_proportional() {
-     * double kP = .01;
-     * double tx = getX(); // Assume getTx() retrieves the tx value from the Limelight
-     * return kP * tx * kMaxAngularSpeed * -1.0;
-     * }
-     * 
-     * public double limelight_range_proportional() {
-     * double kP = 1.0;
-     * double tA = getA();
-     * double speedDifferential = targetArea - tA;
-     * double speedFactor = speedDifferential / targetArea;
-     * double speed = kP * speedFactor * kMaxSpeed * -1.0;
-     * System.out.println(speed);
-     * return speed;
-     * }
-     */
-
-    public boolean atTarget() {
+    public boolean atTarget()
+    {
         return getA() >= targetArea;
     }
 
@@ -67,18 +63,56 @@ public class LimelightSubsystem extends SubsystemBase
         {
             return 0.0;
         }
-        /*
-         * basically a rearrangement of tan(0) = opp/adj
-         * - 0 is the angle from the camera to the target, considering both internal angle deviations
-         * - opp is the difference in height between the camera and the target
-         * - adj is the distance from the camera to the target (what we're solving for)
-         */
         return (targetHeight - cameraHeight) / Math.tan(getY());
+    }
+
+    public Pose2d getTargetPose(double offsetDistance)
+    {
+        double[] tagPoseArray = LimelightHelpers.getTargetPose_RobotSpace("limelight");
+        if (tagPoseArray == null)
+            return null;
+        Pose3d tagPose = new Pose3d(tagPoseArray[0], tagPoseArray[1], tagPoseArray[2],
+            new Rotation3d(tagPoseArray[3], tagPoseArray[4], tagPoseArray[5]));
+        Translation3d offset = new Translation3d(offsetDistance, 0.0, 0.0);
+        Pose3d targetPose = tagPose.transformBy(new Transform3d(offset, new Rotation3d()));
+        return targetPose.toPose2d();
+    }
+
+    public Pose2d getRobotPose()
+    {
+        double[] botPose = LimelightHelpers.getBotPose_wpiBlue("limelight");
+        if (botPose == null)
+            return null;
+        Pose3d tagPose = new Pose3d(botPose[0], botPose[1], botPose[2],
+            new Rotation3d(botPose[3], botPose[4], botPose[5]));
+        return tagPose.toPose2d();
     }
 
     @Override
     public void periodic()
     {
-        
+        // This method will be called once per scheduler run
+
+        var position = getRobotPose();
+
+        if (isTargetingStarted)
+        {
+            if (((position.minus(targetPosition).getX()) < tolerance.getX()
+                && (position.minus(targetPosition).getY()) < tolerance.getY()
+                && (position.minus(targetPosition).getRotation().getRadians()) < tolerance.getRotation().getRadians())
+
+                && ((position.minus(lastPosition).getX()) < tolerance.getX()
+                    && (position.minus(lastPosition).getY()) < tolerance.getY()
+                    && (position.minus(lastPosition).getRotation().getRadians()) < tolerance.getRotation()
+                        .getRadians()))
+            {
+                atTargetPosition = true;
+                isTargetingStarted = false;
+            }
+            else
+            {
+                lastPosition = position;
+            }
+        }
     }
 }

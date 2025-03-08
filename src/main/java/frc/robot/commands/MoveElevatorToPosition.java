@@ -22,7 +22,8 @@ public class MoveElevatorToPosition extends Command
     private final XboxController gamepad;
     private final String toleranceKey;
 
-    private final HashMap<Integer, CoralLevel> levelMap = new HashMap<>(){
+    private final HashMap<Integer, CoralLevel> levelMap = new HashMap<>()
+    {
         {
             put(-1, CoralLevel.Intake);
             put(0, CoralLevel.Reef2);
@@ -47,8 +48,8 @@ public class MoveElevatorToPosition extends Command
     @Override
     public void initialize()
     {
-         var tolerance = SmartDashboard.getNumber(toleranceKey, PIDConstants.tolerance);
-         elevator.setPosition(levelMap.get(gamepad.getPOV()).elevatorPosition(), tolerance);
+        var tolerance = SmartDashboard.getNumber(toleranceKey, PIDConstants.tolerance);
+        elevator.setPosition(levelMap.get(gamepad.getPOV()).elevatorPosition(), tolerance);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
