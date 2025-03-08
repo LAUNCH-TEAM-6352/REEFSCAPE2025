@@ -5,9 +5,9 @@
 package frc.robot.commands.test;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.CoralLevel;
 import frc.robot.Constants.DashboardConstants.ElevatorKeys;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.ElevatorConstants.CoralLevel;
 import frc.robot.Constants.TestConstants;
 import frc.robot.subsystems.Elevator;
 

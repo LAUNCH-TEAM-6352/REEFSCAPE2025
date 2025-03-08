@@ -6,7 +6,7 @@ package frc.robot.commands.test;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ElevatorConstants.CoralLevel;
+import frc.robot.Constants.CoralLevel;
 import frc.robot.Constants.ElevatorConstants.PIDConstants;
 import frc.robot.subsystems.Elevator;
 

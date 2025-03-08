@@ -54,6 +54,27 @@ public final class Constants
 
     }
 
+    public enum CoralLevel
+    {
+        Intake(0.0),
+        Reef1(10.0),
+        Reef2(19.5),
+        Reef3(34.0),
+        Reef4(53.0);
+
+        private final double elevatorPosition;
+
+        CoralLevel(double elevatorPosition)
+        {
+            this.elevatorPosition = elevatorPosition;
+        }
+
+        public double elevatorPosition()
+        {
+            return elevatorPosition;
+        }
+    }
+
     public static class CoralManipulatorConstants
     {
         public static final int leftRollerMotorChannel = 41;
@@ -146,27 +167,6 @@ public final class Constants
             public static final double velocityConversionFactor = 1; // Rotations per minute
         }
 
-        public enum CoralLevel
-        {
-            Intake(0.0),
-            Reef1(10.0),
-            Reef2(19.5),
-            Reef3(34.0),
-            Reef4(53.0);
-
-            private final double elevatorPosition;
-
-            CoralLevel(double elevatorPosition)
-            {
-                this.elevatorPosition = elevatorPosition;
-            }
-
-            public double elevatorPosition()
-            {
-                return elevatorPosition;
-            }
-        }
-
         public static final class PIDConstants
         {
             public static final double kP = 0.15;
@@ -213,5 +213,4 @@ public final class Constants
         public static final double swerveModuleAngleCwPercentOutput = -0.25;
         public static final double coralManipulatorTimeoutSecs = 5;
     }
-
 }
