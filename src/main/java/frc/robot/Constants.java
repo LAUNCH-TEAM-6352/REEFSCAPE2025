@@ -156,7 +156,7 @@ public final class Constants
         public static final double maxManualMotorSpeed = 0.3;
 
         public static final double minPosition = 0;
-        public static final double maxPosition = 60;
+        public static final double maxPosition = 53;
 
 
         public static final class AlternateEncoderConstants
