@@ -147,10 +147,15 @@ public final class Constants
     {
         public static final TelemetryVerbosity swerveDriveTelemetryVerbosity = TelemetryVerbosity.HIGH;
 
-        public static final double maxSpeedMps = 5.0;
-        public static final double maxAccelerationMps = 2.0;
-        public static final double approachSpeed = 0.0;
+        public static final double maxRpms = 4.0;
+        public static final double maxAccelerationRpms = 2.0;
+        public static final double approachSpeed = 1.0;
         public static final double targetOffset = 0.0;
+
+        public static final double xTolerance = 1.0;
+        public static final double yTolerance = 1.0;
+        public static final double rotTolerance = 0.1;
+
         public static final Transform2d tolerance = new Transform2d(1.0, 1.0, new Rotation2d(0.0));
     }
 
@@ -221,4 +226,5 @@ public final class Constants
         public static final double swerveModuleAngleCwPercentOutput = -0.25;
         public static final double coralManipulatorTimeoutSecs = 5;
 
+    }
 }

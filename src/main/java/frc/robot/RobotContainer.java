@@ -25,6 +25,7 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.TestConstants;
 import frc.robot.commands.Climb;
+import frc.robot.commands.DriveToTarget;
 import frc.robot.commands.DriveWithGamepad;
 import frc.robot.commands.MoveElevatorToPosition;
 import frc.robot.commands.MoveElevatorWithGamepad;
@@ -36,6 +37,7 @@ import frc.robot.subsystems.CoralManipulator;
 import frc.robot.subsystems.CoralReceiver;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Limelight;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -51,6 +53,7 @@ public class RobotContainer
     private final Optional<CoralManipulator> coralManipulator;
     private final Optional<Elevator> elevator;
     private final Optional <CoralReceiver> coralReceiver;
+    private final Optional<Limelight> limelight;
 
     // OI devices:
 
@@ -77,6 +80,7 @@ public class RobotContainer
         // -cm- Coral manipulator
         // -e- Elevator
         // -cr- Coral receiver
+        // -l- Limelight
 
         var gameData = DriverStation.getGameSpecificMessage().toLowerCase();
         SmartDashboard.putString("Game Data", gameData);
@@ -122,6 +126,10 @@ public class RobotContainer
 
         coralReceiver = gameData.isBlank() || gameData.contains("-cr-")
             ? Optional.of(new CoralReceiver())
+            : Optional.empty();
+        
+        limelight = gameData.isBlank() || gameData.contains("-l-")
+            ? Optional.of(new Limelight())
             : Optional.empty();
 
         // Configure commands for Path Planner:
@@ -174,6 +182,11 @@ public class RobotContainer
         coralManipulator.ifPresent(this::configureBindings);
         elevator.ifPresent(this::configureBindings);
         coralReceiver.ifPresent(this::configureBindings);
+        
+        if(driveTrain.isPresent() && limelight.isPresent())
+        {
+            configureBindings(driveTrain.get(), limelight.get());
+        }
     }
 
     private void configureBindings(CoralManipulator coralManipulator)
@@ -213,6 +226,16 @@ public class RobotContainer
         // but don't want to make moving the coral tray part of the whileTrue().
         commandCodriverGamepad.start().and(commandCodriverGamepad.back())
             .whileTrue(new Climb(climber, ClimberKeys.winchMotorSpeedKey, codriverGamepad));
+    }
+
+    private void configureBindings(DriveTrain driveTrain, Limelight limelight)
+    {
+        if (commandCodriverGamepad == null)
+        {
+            return;
+        }
+
+        commandCodriverGamepad.b().onTrue(new DriveToTarget(limelight, driveTrain));
     }
 
     private void configureBindings(Elevator elevator)
