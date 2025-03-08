@@ -288,16 +288,19 @@ public class RobotContainer
     {
         var group = new SequentialCommandGroup();
 
+        // Wait for startup messages to be logged to driver station console:
         group.addCommands(new WaitCommand(5));
 
         if (driveTrain.isPresent())
         {
             group.addCommands(new TestDriveTrain(driveTrain.get()));
-        };
+        }
+
         if (elevator.isPresent())
         {
             group.addCommands(new TestElevator(elevator.get()));
         }
+
         if (coralManipulator.isPresent())
         {
             group.addCommands(
