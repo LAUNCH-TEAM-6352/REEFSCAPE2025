@@ -28,6 +28,7 @@ public class CoralReceiver extends SubsystemBase
     private boolean atTargetPosition;
     private boolean isPositioningStarted;
     private double lastPosition;
+    private double currentPosition;
 
     private final SparkMax motor = new SparkMax(CoralReceiverConstants.motorChannel,
         MotorType.kBrushless);
@@ -35,7 +36,6 @@ public class CoralReceiver extends SubsystemBase
     /** Creates a new CoralReciever. */
     public CoralReceiver()
     {
-        targetPosition = CoralReceiverConstants.maxPosition;
         ClosedLoopConfig closedLoopConfig = new ClosedLoopConfig()
             .pidf(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD, PIDConstants.kFF)
             .iZone(PIDConstants.kIZ)
@@ -50,6 +50,7 @@ public class CoralReceiver extends SubsystemBase
         motor.clearFaults();
 
         resetPosition();
+        currentPosition = CoralReceiverConstants.minPosition;
     }
 
     public double getPosition()
@@ -62,14 +63,14 @@ public class CoralReceiver extends SubsystemBase
         motor.getEncoder().setPosition(0);
     }
 
-    /**
-     *  Move the receiver tray to the up position.
-     */
-    public void moveUp()
+    public void move()
     {
         targetTolerance = CoralReceiverConstants.PIDConstants.tolerance;
         lastPosition = getPosition();
-        motor.getClosedLoopController().setReference(CoralReceiverConstants.maxPosition, ControlType.kPosition);
+        targetPosition = currentPosition == CoralReceiverConstants.minPosition
+            ? CoralReceiverConstants.maxPosition
+            : CoralReceiverConstants.minPosition;
+        motor.getClosedLoopController().setReference(targetPosition, ControlType.kPosition);
         atTargetPosition = false;
         isPositioningStarted = true;
     }
@@ -84,7 +85,7 @@ public class CoralReceiver extends SubsystemBase
 
     {
         var position = getPosition();
-        
+
         // This method will be called once per scheduler run
         SmartDashboard.putNumber("Receiver Pos", position);
 
@@ -95,6 +96,9 @@ public class CoralReceiver extends SubsystemBase
             {
                 atTargetPosition = true;
                 isPositioningStarted = false;
+                currentPosition = currentPosition == CoralReceiverConstants.minPosition
+                    ? CoralReceiverConstants.maxPosition
+                    : CoralReceiverConstants.minPosition;
             }
             else
             {

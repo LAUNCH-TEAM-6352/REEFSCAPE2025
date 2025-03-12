@@ -6,51 +6,88 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.config.SoftLimitConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.AlgaeConstants;
+import frc.robot.Constants.AlgaeManipulatorConstants;
+import frc.robot.Constants.AlgaeManipulatorConstants.PIDConstants;
+import frc.robot.Constants.CoralReceiverConstants;
 
 /**
  * A subsystem for the Algae Manipulator.
  */
 public class AlgaeManipulator extends SubsystemBase
 {
-    private final SparkMax pivotMotor = new SparkMax(AlgaeConstants.pivotMotorChannel, MotorType.kBrushless);
-    private final SparkMax rollerMotor = new SparkMax(AlgaeConstants.rollerMotorChannel, MotorType.kBrushless);
+    private double targetPosition;
+    private double targetTolerance;
+    private boolean atTargetPosition;
+    private boolean isPositioningStarted;
+    private double lastPosition;
+    private double currentPosition;
 
-    
+    private final SparkMax pivotMotor = new SparkMax(AlgaeManipulatorConstants.pivotMotorChannel, MotorType.kBrushless);
+    private final SparkMax rollerMotor = new SparkMax(AlgaeManipulatorConstants.rollerMotorChannel, MotorType.kBrushless);
+
     /** Creates a new AlgaeManipulator. */
     public AlgaeManipulator()
     {
-        // TODO: Do we need to add a PID controller and support for moving to preset positions?
-        SoftLimitConfig softLimitConfig = new SoftLimitConfig()
-            .forwardSoftLimit(AlgaeConstants.pivotMotorMaxPosition)
-            .forwardSoftLimitEnabled(true)
-            .reverseSoftLimit(AlgaeConstants.pivotMotorMinPosition)
-            .reverseSoftLimitEnabled(true);
+        ClosedLoopConfig closedLoopConfig = new ClosedLoopConfig()
+            .pidf(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD, PIDConstants.kFF)
+            .iZone(PIDConstants.kIZ)
+            .outputRange(PIDConstants.minOutput, PIDConstants.maxOutput);
             
         SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
         pivotMotorConfig
-            .idleMode(AlgaeConstants.pivotMotorIdleMode)
-            .inverted(AlgaeConstants.isPivotMotorInverted)
-            .apply(softLimitConfig);
+            .idleMode(AlgaeManipulatorConstants.pivotMotorIdleMode)
+            .inverted(AlgaeManipulatorConstants.isPivotMotorInverted)
+            .apply(closedLoopConfig);
 
         pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         pivotMotor.clearFaults();
-        pivotMotor.getEncoder().setPosition(0);
+        pivotMotor.getEncoder().setPosition(AlgaeManipulatorConstants.storedPivotPosition);
 
         SparkMaxConfig rollerMotorConfig = new SparkMaxConfig();
         rollerMotorConfig
-            .idleMode(AlgaeConstants.rollerMotorIdleMode)
-            .inverted(AlgaeConstants.isRollerMotorInverted);
+            .idleMode(AlgaeManipulatorConstants.rollerMotorIdleMode)
+            .inverted(AlgaeManipulatorConstants.isRollerMotorInverted);
 
         rollerMotor.configure(rollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         rollerMotor.clearFaults();
+
+        resetPivotPosition();
+        currentPosition = AlgaeManipulatorConstants.storedPivotPosition;
+    }
+
+    public double getPivotPosition()
+    {
+        return pivotMotor.getEncoder().getPosition();
+    }
+
+    public void togglePivotPosition()
+    {
+        targetTolerance = AlgaeManipulatorConstants.PIDConstants.tolerance;
+        lastPosition = getPivotPosition();
+        targetPosition = currentPosition == AlgaeManipulatorConstants.storedPivotPosition
+            ? AlgaeManipulatorConstants.activePivotPosition
+            : AlgaeManipulatorConstants.storedPivotPosition;
+        pivotMotor.getClosedLoopController().setReference(targetPosition, ControlType.kPosition);
+        atTargetPosition = false;
+        isPositioningStarted = true;
+    }
+
+    public boolean atTargetPosition()
+    {
+        return atTargetPosition;
+    }
+
+    public void resetPivotPosition()
+    {
+        pivotMotor.getEncoder().setPosition(0);
     }
 
     public void setPivotMotorSpeed(double speed)
@@ -58,9 +95,33 @@ public class AlgaeManipulator extends SubsystemBase
         pivotMotor.set(speed);
     }
 
+    public void setRollerMotorSpeed(double speed)
+    {
+        rollerMotor.set(speed);
+    }
+
     @Override
     public void periodic()
     {
+        var position = getPivotPosition();
+
         SmartDashboard.putNumber("Pivot Pos", pivotMotor.getEncoder().getPosition());
+
+        if (isPositioningStarted)
+        {
+            if ((Math.abs(position - targetPosition) < targetTolerance)
+                && Math.abs(position - lastPosition) < targetTolerance)
+            {
+                atTargetPosition = true;
+                isPositioningStarted = false;
+                currentPosition = currentPosition == AlgaeManipulatorConstants.storedPivotPosition
+                    ? AlgaeManipulatorConstants.activePivotPosition
+                    : AlgaeManipulatorConstants.storedPivotPosition;
+            }
+            else
+            {
+                lastPosition = position;
+            }
+        }
     }
 }
