@@ -35,7 +35,7 @@ public final class Constants
         public static final boolean isRollerMotorInverted = false; 
 
         public static final double storedPivotPosition = pivotMotorMinPosition;
-        public static final double activePivotPosition = 1000;
+        public static final double activePivotPosition = 55;
 
         public static final class PIDConstants
         {
