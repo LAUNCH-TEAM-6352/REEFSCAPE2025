@@ -19,7 +19,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
  */
 public final class Constants
 {
-    public static class AlgaeConstants
+    public static class AlgaeManipulatorConstants
     {
         public static final int pivotMotorChannel = 45;
         public static final IdleMode pivotMotorIdleMode = IdleMode.kBrake;

@@ -14,8 +14,8 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.AlgaeConstants;
-import frc.robot.Constants.AlgaeConstants.PIDConstants;
+import frc.robot.Constants.AlgaeManipulatorConstants;
+import frc.robot.Constants.AlgaeManipulatorConstants.PIDConstants;
 import frc.robot.Constants.CoralReceiverConstants;
 
 /**
@@ -30,8 +30,8 @@ public class AlgaeManipulator extends SubsystemBase
     private double lastPosition;
     private double currentPosition;
 
-    private final SparkMax pivotMotor = new SparkMax(AlgaeConstants.pivotMotorChannel, MotorType.kBrushless);
-    private final SparkMax rollerMotor = new SparkMax(AlgaeConstants.rollerMotorChannel, MotorType.kBrushless);
+    private final SparkMax pivotMotor = new SparkMax(AlgaeManipulatorConstants.pivotMotorChannel, MotorType.kBrushless);
+    private final SparkMax rollerMotor = new SparkMax(AlgaeManipulatorConstants.rollerMotorChannel, MotorType.kBrushless);
 
     /** Creates a new AlgaeManipulator. */
     public AlgaeManipulator()
@@ -43,24 +43,24 @@ public class AlgaeManipulator extends SubsystemBase
             
         SparkMaxConfig pivotMotorConfig = new SparkMaxConfig();
         pivotMotorConfig
-            .idleMode(AlgaeConstants.pivotMotorIdleMode)
-            .inverted(AlgaeConstants.isPivotMotorInverted)
+            .idleMode(AlgaeManipulatorConstants.pivotMotorIdleMode)
+            .inverted(AlgaeManipulatorConstants.isPivotMotorInverted)
             .apply(closedLoopConfig);
 
         pivotMotor.configure(pivotMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         pivotMotor.clearFaults();
-        pivotMotor.getEncoder().setPosition(AlgaeConstants.storedPivotPosition);
+        pivotMotor.getEncoder().setPosition(AlgaeManipulatorConstants.storedPivotPosition);
 
         SparkMaxConfig rollerMotorConfig = new SparkMaxConfig();
         rollerMotorConfig
-            .idleMode(AlgaeConstants.rollerMotorIdleMode)
-            .inverted(AlgaeConstants.isRollerMotorInverted);
+            .idleMode(AlgaeManipulatorConstants.rollerMotorIdleMode)
+            .inverted(AlgaeManipulatorConstants.isRollerMotorInverted);
 
         rollerMotor.configure(rollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         rollerMotor.clearFaults();
 
         resetPivotPosition();
-        currentPosition = AlgaeConstants.storedPivotPosition;
+        currentPosition = AlgaeManipulatorConstants.storedPivotPosition;
     }
 
     public double getPivotPosition()
@@ -70,11 +70,11 @@ public class AlgaeManipulator extends SubsystemBase
 
     public void togglePivotPosition()
     {
-        targetTolerance = AlgaeConstants.PIDConstants.tolerance;
+        targetTolerance = AlgaeManipulatorConstants.PIDConstants.tolerance;
         lastPosition = getPivotPosition();
-        targetPosition = currentPosition == AlgaeConstants.storedPivotPosition
-            ? AlgaeConstants.activePivotPosition
-            : AlgaeConstants.storedPivotPosition;
+        targetPosition = currentPosition == AlgaeManipulatorConstants.storedPivotPosition
+            ? AlgaeManipulatorConstants.activePivotPosition
+            : AlgaeManipulatorConstants.storedPivotPosition;
         pivotMotor.getClosedLoopController().setReference(targetPosition, ControlType.kPosition);
         atTargetPosition = false;
         isPositioningStarted = true;
@@ -114,9 +114,9 @@ public class AlgaeManipulator extends SubsystemBase
             {
                 atTargetPosition = true;
                 isPositioningStarted = false;
-                currentPosition = currentPosition == AlgaeConstants.storedPivotPosition
-                    ? AlgaeConstants.activePivotPosition
-                    : AlgaeConstants.storedPivotPosition;
+                currentPosition = currentPosition == AlgaeManipulatorConstants.storedPivotPosition
+                    ? AlgaeManipulatorConstants.activePivotPosition
+                    : AlgaeManipulatorConstants.storedPivotPosition;
             }
             else
             {

@@ -7,7 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.AlgaeConstants;
+import frc.robot.Constants.AlgaeManipulatorConstants;
 import frc.robot.subsystems.AlgaeManipulator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -34,10 +34,10 @@ public class MoveAlgaeManipulatorWithGamepad extends Command
     @Override
     public void execute()
     {
-        var speed = gamepad.getLeftY() * AlgaeConstants.pivotMotorMaxSpeed;
+        var speed = gamepad.getLeftY() * AlgaeManipulatorConstants.pivotMotorMaxSpeed;
         var position = algaeManipulator.getPivotPosition();
-        if ((speed < 0 && position <= AlgaeConstants.storedPivotPosition) ||
-            (speed > 0 && position >= AlgaeConstants.activePivotPosition))
+        if ((speed < 0 && position <= AlgaeManipulatorConstants.storedPivotPosition) ||
+            (speed > 0 && position >= AlgaeManipulatorConstants.activePivotPosition))
         {
             speed = 0;
             gamepad.setRumble(RumbleType.kBothRumble, 1);
