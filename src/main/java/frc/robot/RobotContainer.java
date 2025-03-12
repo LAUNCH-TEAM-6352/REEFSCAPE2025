@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.lang.StackWalker.Option;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -26,11 +27,15 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.TestConstants;
 import frc.robot.commands.Climb;
 import frc.robot.commands.DriveWithGamepad;
+import frc.robot.commands.MoveAlgaeManipulatorWithGamepad;
 import frc.robot.commands.MoveElevatorToPosition;
 import frc.robot.commands.MoveElevatorWithGamepad;
+import frc.robot.commands.test.TestClimber;
 import frc.robot.commands.test.TestCoralManipulator;
+import frc.robot.commands.test.TestCoralReceiver;
 import frc.robot.commands.test.TestDriveTrain;
 import frc.robot.commands.test.TestElevator;
+import frc.robot.subsystems.AlgaeManipulator;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralManipulator;
 import frc.robot.subsystems.CoralReceiver;
@@ -51,6 +56,7 @@ public class RobotContainer
     private final Optional<CoralManipulator> coralManipulator;
     private final Optional<Elevator> elevator;
     private final Optional <CoralReceiver> coralReceiver;
+    private final Optional<AlgaeManipulator> algaeManipulator;
 
     // OI devices:
 
@@ -77,6 +83,7 @@ public class RobotContainer
         // -cm- Coral manipulator
         // -e- Elevator
         // -cr- Coral receiver
+        // -am- AlgaeManipulator
 
         var gameData = DriverStation.getGameSpecificMessage().toLowerCase();
         SmartDashboard.putString("Game Data", gameData);
@@ -104,6 +111,10 @@ public class RobotContainer
         }
 
         // Create subsystems:
+        algaeManipulator = gameData.isBlank() || gameData.contains("-am-")
+            ? Optional.of(new AlgaeManipulator())
+            : Optional.empty();
+
         driveTrain = gameData.isBlank() || gameData.contains("-dt-")
             ? Optional.of(new DriveTrain())
             : Optional.empty();
@@ -174,6 +185,18 @@ public class RobotContainer
         coralManipulator.ifPresent(this::configureBindings);
         elevator.ifPresent(this::configureBindings);
         coralReceiver.ifPresent(this::configureBindings);
+        algaeManipulator.ifPresent(this::configureBindings);
+    }
+
+    private void configureBindings(AlgaeManipulator algaeManipulator)
+    {
+        if (commandCodriverGamepad == null)
+        {
+            return;
+        }
+
+        commandCodriverGamepad.leftStick()
+            .onTrue(new MoveAlgaeManipulatorWithGamepad(algaeManipulator, codriverGamepad));
     }
 
     private void configureBindings(CoralManipulator coralManipulator)
@@ -197,10 +220,10 @@ public class RobotContainer
             return;
         }
 
-        commandCodriverGamepad.rightTrigger()
-            .onTrue(new InstantCommand(() -> coralReceiver.moveUp()));
-    }
+        commandCodriverGamepad.leftTrigger()
+            .onTrue(new InstantCommand(() -> coralReceiver.move()));
 
+    }
 
     private void configureBindings(Climber climber)
     {
@@ -209,10 +232,11 @@ public class RobotContainer
             return;
         }
 
-        // TODO: Need to move coral trey out of the way before climbing,
-        // but don't want to make moving the coral tray part of the whileTrue().
         commandCodriverGamepad.start().and(commandCodriverGamepad.back())
             .whileTrue(new Climb(climber, ClimberKeys.winchMotorSpeedKey, codriverGamepad));
+
+        commandCodriverGamepad.rightTrigger()
+            .onTrue(new InstantCommand(() -> climber.toggleRatchet()));
     }
 
     private void configureBindings(Elevator elevator)
@@ -301,6 +325,11 @@ public class RobotContainer
             group.addCommands(new TestElevator(elevator.get()));
         }
 
+        if (climber.isPresent())
+        {
+            group.addCommands(new TestClimber(climber.get()));
+        }
+
         if (coralManipulator.isPresent())
         {
             group.addCommands(
@@ -315,6 +344,11 @@ public class RobotContainer
                 new TestCoralManipulator(coralManipulator.get(), 
                     SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey, CoralManipulatorConstants.rollerMotorEjectSpeed))
                     .withTimeout((TestConstants.coralManipulatorTimeoutSecs)));
+        }
+
+        if (coralReceiver.isPresent())
+        {
+            group.addCommands(new TestCoralReceiver(coralReceiver.get()));
         }
 
         return group;

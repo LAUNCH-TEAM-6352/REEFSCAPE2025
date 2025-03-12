@@ -23,16 +23,31 @@ public final class Constants
     {
         public static final int pivotMotorChannel = 45;
         public static final IdleMode pivotMotorIdleMode = IdleMode.kBrake;
-        public static final boolean isPivotMotorInverted = false;
+        public static final boolean isPivotMotorInverted = true;
         public static final double pivotMotorMinPosition = 0;
-        public static final double pivotMotorMaxPosition = 1000;
-        public static final double pivotMotorSpeed = .5;
+        public static final double pivotMotorMaxPosition = 68;
+        public static final double pivotMotorMaxSpeed = .5;
 
         public static final int rollerMotorChannel = 46;
         public static final double rollerMotorIntakeSpeed = .5;
         public static final double rollerMotorEjectSpeed = -.5;
         public static final IdleMode rollerMotorIdleMode = IdleMode.kBrake;
         public static final boolean isRollerMotorInverted = false; 
+
+        public static final double storedPivotPosition = pivotMotorMinPosition;
+        public static final double activePivotPosition = 1000;
+
+        public static final class PIDConstants
+        {
+            public static final double kP = 0.15;
+            public static final double kI = 0.0;
+            public static final double kD = 0.0;
+            public static final int kIZ = 0;
+            public static final double kFF = 0;
+            public static final double minOutput = -0.25;
+            public static final double maxOutput = 0.25;
+            public static final double tolerance = 0.5;
+        }
     }
 
     public static class ClimberConstants
@@ -43,6 +58,9 @@ public final class Constants
         public static final boolean isMotorInverted = false;
         public static final double maxPosition = 108;
         public static final double minPosition = 0;
+        public static final int servoChannel = 0;
+        public static final int ratchetEngagedPosition = 1500;
+        public static final int ratchetReleasedPosition = 1000;
 
         public static class EncoderConstants
         {
@@ -100,7 +118,7 @@ public final class Constants
         public static final int motorChannel = 48;
         public static final IdleMode motorIdleMode = IdleMode.kBrake;
         public static final boolean isMotorInverted = false;
-        public static final double maxPosition = 12.5;
+        public static final double maxPosition = 12.8;
         public static final double minPosition = 0;
 
         public static final class PIDConstants
@@ -204,7 +222,8 @@ public final class Constants
 
     public static class TestConstants
     {
-        public static final double inbetweenTimeSecs = 1;
+        public static final double inbetweenTimeSecs = 1.0;
+        public static final double instantInBetweenSecs = 4.0;
 
         public static final double swerveModuleMotorTimeoutSecs = 5;
         public static final double swerveModuleDriveForwardPercentOutput = 0.25;

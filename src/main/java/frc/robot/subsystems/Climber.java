@@ -12,6 +12,7 @@ import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
@@ -23,6 +24,8 @@ import frc.robot.Constants.ClimberConstants.EncoderConstants;
 public class Climber extends SubsystemBase
 {
     private final SparkMax winchMotor = new SparkMax(ClimberConstants.winchMotorChannel, MotorType.kBrushed);
+    private final Servo servo = new Servo(ClimberConstants.servoChannel);
+    private int currentServoPosition;
 
     /** Creates a new Climber. */
     public Climber()
@@ -50,13 +53,24 @@ public class Climber extends SubsystemBase
             
         winchMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         winchMotor.clearFaults();
-
         winchMotor.getEncoder().setPosition(0);
+        
+        currentServoPosition = ClimberConstants.ratchetEngagedPosition;
+        servo.setPulseTimeMicroseconds(currentServoPosition);    
     }
 
     public void setClimbSpeed(double speed)
     {
         winchMotor.set(speed);
+    }
+
+    public void toggleRatchet()
+    {
+        var position = currentServoPosition == ClimberConstants.ratchetEngagedPosition
+            ? ClimberConstants.ratchetReleasedPosition
+            : ClimberConstants.ratchetEngagedPosition;
+        servo.setPulseTimeMicroseconds(position);
+        currentServoPosition = position;
     }
 
     public double getPosition()
@@ -74,6 +88,6 @@ public class Climber extends SubsystemBase
     {
         // This method will be called once per scheduler run
         SmartDashboard.putNumber("Climber RPM", winchMotor.getEncoder().getVelocity());
-        SmartDashboard.putNumber("Climber Pos", winchMotor.getEncoder().getPosition());        
+        SmartDashboard.putNumber("Climber Pos", winchMotor.getEncoder().getPosition()); 
     }
 }
