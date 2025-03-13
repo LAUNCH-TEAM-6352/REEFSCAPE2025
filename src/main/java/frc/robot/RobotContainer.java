@@ -4,10 +4,10 @@
 
 package frc.robot;
 
-import java.lang.StackWalker.Option;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,8 +27,9 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.TestConstants;
 import frc.robot.commands.Climb;
 import frc.robot.commands.DriveWithGamepad;
+import frc.robot.commands.DriveWithJoystick;
 import frc.robot.commands.MoveAlgaeManipulatorWithGamepad;
-import frc.robot.commands.MoveElevatorToPosition;
+import frc.robot.commands.MoveElevatorToCoralPosition;
 import frc.robot.commands.MoveElevatorWithGamepad;
 import frc.robot.commands.test.TestClimber;
 import frc.robot.commands.test.TestCoralManipulator;
@@ -51,21 +52,22 @@ import frc.robot.subsystems.Elevator;
 public class RobotContainer
 {
     // Subsystems:
-    private final Optional<DriveTrain> driveTrain;
+    protected final Optional<DriveTrain> driveTrain;
     private final Optional<Climber> climber;
     private final Optional<CoralManipulator> coralManipulator;
     private final Optional<Elevator> elevator;
-    private final Optional <CoralReceiver> coralReceiver;
+    private final Optional<CoralReceiver> coralReceiver;
     private final Optional<AlgaeManipulator> algaeManipulator;
 
     // OI devices:
-
-    private final XboxController driverGamepad;
+    private Joystick driverJoystick = null;
+    private XboxController driverGamepad = null;
     private final XboxController codriverGamepad;
     private final CommandXboxController commandCodriverGamepad;
 
     SendableChooser<Boolean> driveOrientationChooser = new SendableChooser<>();
     SendableChooser<Command> autoChooser = new SendableChooser<>();
+    SendableChooser<Command> driverHIDChooser = new SendableChooser<>();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer()
@@ -92,6 +94,9 @@ public class RobotContainer
         if (gameData.contains("-oi-"))
         {
             // Explicitly look for OI devices:
+            driverJoystick = DriverStation.isJoystickConnected(OperatorConstants.driverJoystickPort)
+                ? new Joystick(OperatorConstants.driverJoystickPort)
+                : null;
             driverGamepad = DriverStation.isJoystickConnected(OperatorConstants.driverGamepadPort)
                 ? new XboxController(OperatorConstants.driverGamepadPort)
                 : null;
@@ -161,13 +166,18 @@ public class RobotContainer
      */
     private void configureDefaultCommands()
     {
-        driveTrain.ifPresent((dt) ->
+    }
+
+    /**
+     * Set the default command for the drive train.
+     * This is called from {@link Robot#teleopInit()} so the defaukle command can be obtained from a SmartDashboard chooser.
+     */
+    void setDriveTrainDefaultCommand()
+    {
+        if (driveTrain.isPresent())
         {
-            if (driverGamepad != null)
-            {
-                dt.setDefaultCommand(new DriveWithGamepad(dt, driverGamepad, driveOrientationChooser));
-            }
-        });
+            driveTrain.get().setDefaultCommand(driverHIDChooser.getSelected());
+        }
     }
 
     /**
@@ -248,7 +258,7 @@ public class RobotContainer
         commandCodriverGamepad.rightStick()
             .onTrue(new MoveElevatorWithGamepad(elevator, codriverGamepad));
 
-        commandCodriverGamepad.a().onTrue(new MoveElevatorToPosition(elevator, codriverGamepad, ElevatorKeys.toleranceKey));
+        commandCodriverGamepad.a().onTrue(new MoveElevatorToCoralPosition(elevator, codriverGamepad, ElevatorKeys.toleranceKey));
     }
 
     private void configureSmartDashboard()
@@ -264,6 +274,7 @@ public class RobotContainer
 
     private void configureSmartDashboard(DriveTrain driveTrain)
     {
+        configureDriverHIDChooser(driverHIDChooser);
     }
 
     private void configureSmartDashboard(Climber climber)
@@ -293,6 +304,28 @@ public class RobotContainer
         driveOrientationChooser.setDefaultOption("Field Relative", Boolean.TRUE);
         driveOrientationChooser.addOption("Robot Relative", Boolean.FALSE);
         SmartDashboard.putData("Drive Orientation", driveOrientationChooser);
+    }
+
+    private void configureDriverHIDChooser(SendableChooser<Command> driverHIDChooser)
+    {
+        boolean defaultSet = false;
+        if (driverGamepad != null)
+        {
+            driverHIDChooser.setDefaultOption("Drive with Gamepad", new DriveWithGamepad(driveTrain.get(), driverGamepad, driveOrientationChooser));
+            defaultSet = true;
+        }
+        if (driverJoystick != null)
+        {
+            if (!defaultSet)
+            {
+                driverHIDChooser.setDefaultOption("Drive with Joystick", new DriveWithJoystick(driveTrain.get(), driverJoystick, driveOrientationChooser));
+            }
+            else
+            {
+                driverHIDChooser.addOption("Drive with Joystick", new DriveWithJoystick(driveTrain.get(), driverJoystick, driveOrientationChooser));
+            }
+        }
+        SmartDashboard.putData("Driver Chooser", driverHIDChooser);
     }
 
     /**

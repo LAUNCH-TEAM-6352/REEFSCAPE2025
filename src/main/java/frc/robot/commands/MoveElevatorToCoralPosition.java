@@ -16,13 +16,14 @@ import frc.robot.subsystems.Elevator;
 /**
  * A command that moves the elevator to a pre-defined position based upon gamepad input.
  */
-public class MoveElevatorToPosition extends Command
+public class MoveElevatorToCoralPosition extends Command
 {
     private final Elevator elevator;
     private final XboxController gamepad;
     private final String toleranceKey;
 
-    private final HashMap<Integer, CoralLevel> levelMap = new HashMap<>(){
+    // Maps from gamepad D-pad values to coral levels.
+    private final HashMap<Integer, CoralLevel> coralLevels = new HashMap<>(){
         {
             put(-1, CoralLevel.Intake);
             put(0, CoralLevel.Reef2);
@@ -35,7 +36,7 @@ public class MoveElevatorToPosition extends Command
     /**
      * Constructor.
      */
-    public MoveElevatorToPosition(Elevator elevator, XboxController gamepad, String toleranceKey)
+    public MoveElevatorToCoralPosition(Elevator elevator, XboxController gamepad, String toleranceKey)
     {
         this.toleranceKey = toleranceKey;
         this.elevator = elevator;
@@ -48,7 +49,7 @@ public class MoveElevatorToPosition extends Command
     public void initialize()
     {
          var tolerance = SmartDashboard.getNumber(toleranceKey, PIDConstants.tolerance);
-         elevator.setPosition(levelMap.get(gamepad.getPOV()).elevatorPosition(), tolerance);
+         elevator.setPosition(coralLevels.get(gamepad.getPOV()).elevatorPosition(), tolerance);
     }
 
     // Called every time the scheduler runs while the command is scheduled.

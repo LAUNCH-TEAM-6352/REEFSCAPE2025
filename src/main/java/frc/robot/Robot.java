@@ -89,6 +89,9 @@ public class Robot extends TimedRobot
         {
             m_autonomousCommand.cancel();
         }
+
+        // Set the defaulkt command for the drive train:
+        m_robotContainer.setDriveTrainDefaultCommand();
     }
 
     /** This function is called periodically during operator control. */

@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+
 import com.pathplanner.lib.config.PIDConstants;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 /**
@@ -161,6 +164,21 @@ public final class Constants
     public static class DriveConstants
     {
         public static final TelemetryVerbosity swerveDriveTelemetryVerbosity = TelemetryVerbosity.HIGH;
+        public static final double nudgeSpeedMps = 0.1;
+
+        // Maps from joystick/gamepad D-pad values to translation speeds for nudging the robot:
+        public static final HashMap<Integer, Translation2d> nudgeTranslations = new HashMap<>(){
+            {
+                put(0, new Translation2d(DriveConstants.nudgeSpeedMps, 0.0));
+                put(45, new Translation2d(DriveConstants.nudgeSpeedMps, -DriveConstants.nudgeSpeedMps));
+                put(90, new Translation2d(0.0, -DriveConstants.nudgeSpeedMps));
+                put(135, new Translation2d(-DriveConstants.nudgeSpeedMps, -DriveConstants.nudgeSpeedMps));
+                put(180, new Translation2d(-DriveConstants.nudgeSpeedMps, 0.0));
+                put(225, new Translation2d(-DriveConstants.nudgeSpeedMps, DriveConstants.nudgeSpeedMps));
+                put(270, new Translation2d(0.0, DriveConstants.nudgeSpeedMps));
+                put(315, new Translation2d(DriveConstants.nudgeSpeedMps, DriveConstants.nudgeSpeedMps));
+            }
+        };
     }
 
     public static final class ElevatorConstants
@@ -200,9 +218,11 @@ public final class Constants
 
     public static class OperatorConstants
     {
+        public static final int driverJoystickPort = 0;
         public static final int driverGamepadPort = 1;
         public static final int codriverGamepadPort = 2;
         public static final double gamepadDeadband = 0.05;
+        public static final double jolystickDeadband = 0.05;
     }
 
     public static final class PathPlannerConstants

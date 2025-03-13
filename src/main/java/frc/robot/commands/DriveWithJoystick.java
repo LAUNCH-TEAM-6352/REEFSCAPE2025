@@ -1,18 +1,19 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.DriveTrain;
 
 /**
- * A command that allows the robot to be driven with a gamepad.
+ * A command that allows the robot to be driven with a joystick.
  * 
- * Note the differences between the gamepad stick and robot coordinate systems:
+ * Note the differences between the joystick and robot coordinate systems:
  * 
- *  Gamepad coordinate system:
+ *  Joystick coordinate system:
  *      - Stick X-axis: - is left, + is right
  *      - Stick Y-axis: - is up, + is down
+ *      - Rotation: - is counter-clockwise, + is clockwise
  *      - D-pad: 0 is up, 90 is right, 180 is down, 270 is left
  * 
  *  Robot coordinate system:
@@ -21,39 +22,38 @@ import frc.robot.subsystems.DriveTrain;
  *      - Rotation: + is counter-clockwise, - is clockwise
  */
 
-public class DriveWithGamepad extends DriveWithGamepadOrJoystick
+public class DriveWithJoystick extends DriveWithGamepadOrJoystick
 {
-    private final XboxController driverController;
+    private final Joystick driverController;
 
-    public DriveWithGamepad(DriveTrain driveTrain, XboxController driverController,
+    public DriveWithJoystick(DriveTrain driveTrain, Joystick driverController,
         SendableChooser<Boolean> driveOrientationChooser)
     {
         super(driveTrain, driverController, driveOrientationChooser);
-
         this.driverController = driverController;
     }
 
     @Override
     protected double getX()
     {
-        return driverController.getLeftX();
+        return driverController.getX();
     }
 
     @Override
     protected double getY()
     {
-        return driverController.getLeftY();
+        return driverController.getY();
     }
 
     @Override
     protected double getRotation()
     {
-        return driverController.getRightX();
+        return driverController.getTwist();
     }
 
     @Override
     protected double applyDeadbandAndSensitivity(double input)
     {
-        return (Math.abs(input) < OperatorConstants.gamepadDeadband) ? 0.0 : Math.pow(input, 2) * Math.signum(input);
+        return (Math.abs(input) < OperatorConstants.jolystickDeadband) ? 0.0 : Math.pow(input, 2) * Math.signum(input);
     }
 }
