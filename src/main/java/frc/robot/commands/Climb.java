@@ -14,6 +14,8 @@ import frc.robot.subsystems.Climber;
 /*
  * A command for climbing.
  * 
+ * This command assumes that the coral receiover tray has been moved out of the way.
+ * 
  * TODO: Do we need to add a command for un-climbing?
  */
 public class Climb extends Command
@@ -37,7 +39,6 @@ public class Climb extends Command
     @Override
     public void initialize()
     {
-        // TODO: Determine if the coral receiver tray needs to be moved out of the way.
         speed = SmartDashboard.getNumber(speedKey, ClimberConstants.winchMotorSpeed);
     }
 

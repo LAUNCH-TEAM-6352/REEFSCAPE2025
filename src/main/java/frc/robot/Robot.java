@@ -89,6 +89,9 @@ public class Robot extends TimedRobot
         {
             m_autonomousCommand.cancel();
         }
+
+        // Set drive configuration values:
+        m_robotContainer.setDriveConfiguration();
     }
 
     /** This function is called periodically during operator control. */

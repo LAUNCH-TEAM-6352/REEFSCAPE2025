@@ -161,6 +161,7 @@ public final class Constants
     public static class DriveConstants
     {
         public static final TelemetryVerbosity swerveDriveTelemetryVerbosity = TelemetryVerbosity.HIGH;
+        public static final double nudgeSpeedMps = 0.1;
     }
 
     public static final class ElevatorConstants
@@ -200,9 +201,11 @@ public final class Constants
 
     public static class OperatorConstants
     {
+        public static final int driverJoystickPort = 0;
         public static final int driverGamepadPort = 1;
         public static final int codriverGamepadPort = 2;
         public static final double gamepadDeadband = 0.05;
+        public static final double jolystickDeadband = 0.05;
     }
 
     public static final class PathPlannerConstants

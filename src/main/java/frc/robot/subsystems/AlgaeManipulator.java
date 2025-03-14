@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AlgaeManipulatorConstants;
 import frc.robot.Constants.AlgaeManipulatorConstants.PIDConstants;
-import frc.robot.Constants.CoralReceiverConstants;
 
 /**
  * A subsystem for the Algae Manipulator.
