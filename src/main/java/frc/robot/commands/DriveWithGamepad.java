@@ -1,7 +1,8 @@
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.DriveTrain;
 
@@ -25,10 +26,9 @@ public class DriveWithGamepad extends DriveWithGamepadOrJoystick
 {
     private final XboxController driverController;
 
-    public DriveWithGamepad(DriveTrain driveTrain, XboxController driverController,
-        SendableChooser<Boolean> driveOrientationChooser)
+    public DriveWithGamepad(DriveTrain driveTrain, XboxController driverController, BooleanSupplier isDrivingFieldRelativeSupplier)
     {
-        super(driveTrain, driverController, driveOrientationChooser);
+        super(driveTrain, driverController, isDrivingFieldRelativeSupplier);
 
         this.driverController = driverController;
     }

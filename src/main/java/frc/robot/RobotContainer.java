@@ -65,6 +65,9 @@ public class RobotContainer
     private final XboxController codriverGamepad;
     private final CommandXboxController commandCodriverGamepad;
 
+    // Drive configuration parameters:
+    private boolean isDrivingFieldRelative;
+
     SendableChooser<Boolean> driveOrientationChooser = new SendableChooser<>();
     SendableChooser<Command> autoChooser = new SendableChooser<>();
     SendableChooser<Command> driverHIDChooser = new SendableChooser<>();
@@ -166,18 +169,6 @@ public class RobotContainer
      */
     private void configureDefaultCommands()
     {
-    }
-
-    /**
-     * Set the default command for the drive train.
-     * This is called from {@link Robot#teleopInit()} so the defaukle command can be obtained from a SmartDashboard chooser.
-     */
-    void setDriveTrainDefaultCommand()
-    {
-        if (driveTrain.isPresent())
-        {
-            driveTrain.get().setDefaultCommand(driverHIDChooser.getSelected());
-        }
     }
 
     /**
@@ -311,18 +302,21 @@ public class RobotContainer
         boolean defaultSet = false;
         if (driverGamepad != null)
         {
-            driverHIDChooser.setDefaultOption("Drive with Gamepad", new DriveWithGamepad(driveTrain.get(), driverGamepad, driveOrientationChooser));
+            driverHIDChooser.setDefaultOption("Drive with Gamepad",
+                new DriveWithGamepad(driveTrain.get(), driverGamepad, () -> { return isDrivingFieldRelative; }));
             defaultSet = true;
         }
         if (driverJoystick != null)
         {
             if (!defaultSet)
             {
-                driverHIDChooser.setDefaultOption("Drive with Joystick", new DriveWithJoystick(driveTrain.get(), driverJoystick, driveOrientationChooser));
+                driverHIDChooser.setDefaultOption("Drive with Joystick",
+                    new DriveWithJoystick(driveTrain.get(), driverJoystick, () -> { return isDrivingFieldRelative; }));
             }
             else
             {
-                driverHIDChooser.addOption("Drive with Joystick", new DriveWithJoystick(driveTrain.get(), driverJoystick, driveOrientationChooser));
+                driverHIDChooser.addOption("Drive with Joystick",
+                    new DriveWithJoystick(driveTrain.get(), driverJoystick, () -> { return isDrivingFieldRelative; }));
             }
         }
         SmartDashboard.putData("Driver Chooser", driverHIDChooser);
@@ -385,5 +379,22 @@ public class RobotContainer
         }
 
         return group;
+    }
+
+    /**
+     * Sets copnfiguiration related to driving.
+     * 
+     * This is called from {@link Robot#teleopInit()} so the correct values
+     * can be obtained from SmartDashboard choosers.
+     */
+    void setDriveConfiguration()
+    {
+        if (driveTrain.isPresent())
+        {
+            // Set the default command for driving.
+            driveTrain.get().setDefaultCommand(driverHIDChooser.getSelected());
+        }
+
+        isDrivingFieldRelative = driveOrientationChooser.getSelected();
     }
 }

@@ -1,12 +1,13 @@
 package frc.robot.commands;
 
+import java.util.HashMap;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SwerveConstants;
@@ -18,9 +19,9 @@ import frc.robot.subsystems.DriveTrain;
  * explicitly support a gamepad or joystick. This abstract implementation
  * assumes thast the gamepad and joystick have similar stick coordinate systems.
  * 
- * Note the differences between the HID stick and robot coordinate systems:
+ * Note the differences between the HID stick, robot and field coordinate systems:
  * 
- *  Gamepad coordinate system:
+ *  Gamepad/Joystick coordinate system:
  *      - X-axis: - is left, + is right
  *      - Y-axis: - is up, + is down
  *      - Rotation: - is counter-clockwise, + is clockwise
@@ -30,21 +31,48 @@ import frc.robot.subsystems.DriveTrain;
  *      - X-axis: + is forward, - is backward
  *      - Y-axis: + is left, - is right
  *      - Rotation: + is counter-clockwise, - is clockwise
+ *  
+ *  Field coordinate system (when looking at field from above with blue alliance on the left):
+ *     - Origin: bottom left corner of the field (blue alliance corner)
+ *     - X-axis: + is right, - is left
+ *     - Y-axis: + is up, - is down
+ *     - Rotation: + is counter-clockwise, - is clockwise
  */
 
 public abstract class DriveWithGamepadOrJoystick extends Command
 {
     private final DriveTrain driveTrain;
     private final GenericHID driverController;
-    private final SendableChooser<Boolean> driveOrientationChooser;
+    private final BooleanSupplier isDrivingFieldRelativeSupplier;
+
+    private boolean isDrivingFieldRelative;
 
     private Optional<Alliance> alliance;
 
-    public DriveWithGamepadOrJoystick(DriveTrain driveTrain, GenericHID driverController, SendableChooser<Boolean> driveOrientationChooser)
+
+    // Maps from joystick/gamepad D-pad values to robot-oriented translation speeds for nudging the robot:
+    private static final HashMap<Integer, Translation2d> nudgeTranslations = new HashMap<>()
+    {
+        {
+            put(0, new Translation2d(DriveConstants.nudgeSpeedMps, 0.0));
+            put(45, new Translation2d(DriveConstants.nudgeSpeedMps, -DriveConstants.nudgeSpeedMps));
+            put(90, new Translation2d(0.0, -DriveConstants.nudgeSpeedMps));
+            put(135, new Translation2d(-DriveConstants.nudgeSpeedMps, -DriveConstants.nudgeSpeedMps));
+            put(180, new Translation2d(-DriveConstants.nudgeSpeedMps, 0.0));
+            put(225, new Translation2d(-DriveConstants.nudgeSpeedMps, DriveConstants.nudgeSpeedMps));
+            put(270, new Translation2d(0.0, DriveConstants.nudgeSpeedMps));
+            put(315, new Translation2d(DriveConstants.nudgeSpeedMps, DriveConstants.nudgeSpeedMps));
+        }
+    };
+
+    /**
+     * Constructor for the DriveWithGamepadOrJoystick command.
+     */
+    public DriveWithGamepadOrJoystick(DriveTrain driveTrain, GenericHID driverController, BooleanSupplier isDrivingFieldRelativeSupplier)
     {
         this.driveTrain = driveTrain;
         this.driverController = driverController;
-        this.driveOrientationChooser = driveOrientationChooser;
+        this.isDrivingFieldRelativeSupplier = isDrivingFieldRelativeSupplier;
 
         // Specify subsystem dependencies (if any)
         addRequirements(driveTrain);
@@ -54,13 +82,14 @@ public abstract class DriveWithGamepadOrJoystick extends Command
     public void initialize()
     {
         alliance = DriverStation.getAlliance();
+        isDrivingFieldRelative = isDrivingFieldRelativeSupplier.getAsBoolean();
     }
 
     @Override
     public void execute()
     {
         // See if we are nudging with the D-pad:
-        var translation = DriveConstants.nudgeTranslations.get(driverController.getPOV());
+        var translation = nudgeTranslations.get(driverController.getPOV());
         if (translation != null)
         {
             // Nudging is done robot relative:
@@ -68,13 +97,13 @@ public abstract class DriveWithGamepadOrJoystick extends Command
             return;
         }
 
-        // Determine if we need to invert drive directions based upon drive orientation:
-        var isFieldRelative = driveOrientationChooser.getSelected();
-        var fieldInversionFactor = isFieldRelative && alliance.isPresent() && alliance.get() == Alliance.Red
+        // If we are drivcing field relative, we need to invert X and Y if our alliance is red.
+        // This is because the field's coordinate system has its origin in the blue alliance corner
+        var fieldInversionFactor = isDrivingFieldRelative && alliance.isPresent() && alliance.get() == Alliance.Red
             ? -1
             : 1;
 
-        // Get gamePad stick inputs
+        // Get gamepad/joystick inputs
         double stickX = getX();
         double stickY = -getY();
         double rotation = getRotation();
@@ -89,7 +118,7 @@ public abstract class DriveWithGamepadOrJoystick extends Command
         double speedY = -stickX * SwerveConstants.maximumLinearVelocityMps;
         double rotationRate = -rotation * SwerveConstants.maximumRotationRateRps;
         Translation2d translationSpeed = new Translation2d(speedX, speedY);
-        driveTrain.drive(translationSpeed, rotationRate, isFieldRelative);
+        driveTrain.drive(translationSpeed, rotationRate, isDrivingFieldRelative);
     }
 
     // Abstract method to get the X-axis value from the gamepad or joystick
