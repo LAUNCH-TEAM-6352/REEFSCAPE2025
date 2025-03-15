@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.AlgaeManipulatorConstants;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.CoralManipulatorConstants;
 import frc.robot.Constants.DashboardConstants.ClimberKeys;
@@ -198,6 +199,9 @@ public class RobotContainer
 
         commandCodriverGamepad.leftStick()
             .onTrue(new MoveAlgaeManipulatorWithGamepad(algaeManipulator, codriverGamepad));
+
+        commandCodriverGamepad.x()
+            .onTrue(new InstantCommand(() -> algaeManipulator.togglePivotPosition(), algaeManipulator));
     }
 
     private void configureBindings(CoralManipulator coralManipulator)
@@ -382,7 +386,7 @@ public class RobotContainer
     }
 
     /**
-     * Sets copnfiguiration related to driving.
+     * Sets configuration related to driving.
      * 
      * This is called from {@link Robot#teleopInit()} so the correct values
      * can be obtained from SmartDashboard choosers.

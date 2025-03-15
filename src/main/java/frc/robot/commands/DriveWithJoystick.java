@@ -54,6 +54,6 @@ public class DriveWithJoystick extends DriveWithGamepadOrJoystick
     @Override
     protected double applyDeadbandAndSensitivity(double input)
     {
-        return (Math.abs(input) < OperatorConstants.jolystickDeadband) ? 0.0 : Math.pow(input, 2) * Math.signum(input);
+        return (Math.abs(input) < OperatorConstants.joystickDeadband) ? 0.0 : Math.pow(input, 2) * Math.signum(input);
     }
 }

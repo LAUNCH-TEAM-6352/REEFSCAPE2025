@@ -32,7 +32,7 @@ public final class Constants
         public static final double rollerMotorIntakeSpeed = .5;
         public static final double rollerMotorEjectSpeed = -.5;
         public static final IdleMode rollerMotorIdleMode = IdleMode.kBrake;
-        public static final boolean isRollerMotorInverted = false; 
+        public static final boolean isRollerMotorInverted = true; 
 
         public static final double storedPivotPosition = pivotMotorMinPosition;
         public static final double activePivotPosition = 55;
@@ -161,7 +161,7 @@ public final class Constants
     public static class DriveConstants
     {
         public static final TelemetryVerbosity swerveDriveTelemetryVerbosity = TelemetryVerbosity.HIGH;
-        public static final double nudgeSpeedMps = 0.1;
+        public static final double nudgeSpeedMps = 0.2;
     }
 
     public static final class ElevatorConstants
@@ -205,7 +205,7 @@ public final class Constants
         public static final int driverGamepadPort = 1;
         public static final int codriverGamepadPort = 2;
         public static final double gamepadDeadband = 0.05;
-        public static final double jolystickDeadband = 0.05;
+        public static final double joystickDeadband = 0.05;
     }
 
     public static final class PathPlannerConstants
