@@ -27,10 +27,9 @@ public class AlgaeManipulator extends SubsystemBase
     private boolean atTargetPosition;
     private boolean isPositioningStarted;
     private double lastPosition;
-    private double currentPosition;
+    private boolean isPivotStored;
 
     private final SparkMax pivotMotor = new SparkMax(AlgaeManipulatorConstants.pivotMotorChannel, MotorType.kBrushless);
-    private final SparkMax rollerMotor = new SparkMax(AlgaeManipulatorConstants.rollerMotorChannel, MotorType.kBrushless);
 
     /** Creates a new AlgaeManipulator. */
     public AlgaeManipulator()
@@ -50,16 +49,8 @@ public class AlgaeManipulator extends SubsystemBase
         pivotMotor.clearFaults();
         pivotMotor.getEncoder().setPosition(AlgaeManipulatorConstants.storedPivotPosition);
 
-        SparkMaxConfig rollerMotorConfig = new SparkMaxConfig();
-        rollerMotorConfig
-            .idleMode(AlgaeManipulatorConstants.rollerMotorIdleMode)
-            .inverted(AlgaeManipulatorConstants.isRollerMotorInverted);
-
-        rollerMotor.configure(rollerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        rollerMotor.clearFaults();
-
         resetPivotPosition();
-        currentPosition = AlgaeManipulatorConstants.storedPivotPosition;
+        isPivotStored = true;
     }
 
     public double getPivotPosition()
@@ -71,7 +62,7 @@ public class AlgaeManipulator extends SubsystemBase
     {
         targetTolerance = AlgaeManipulatorConstants.PIDConstants.tolerance;
         lastPosition = getPivotPosition();
-        targetPosition = currentPosition == AlgaeManipulatorConstants.storedPivotPosition
+        targetPosition = isPivotStored
             ? AlgaeManipulatorConstants.activePivotPosition
             : AlgaeManipulatorConstants.storedPivotPosition;
         pivotMotor.getClosedLoopController().setReference(targetPosition, ControlType.kPosition);
@@ -94,11 +85,6 @@ public class AlgaeManipulator extends SubsystemBase
         pivotMotor.set(speed);
     }
 
-    public void setRollerMotorSpeed(double speed)
-    {
-        rollerMotor.set(speed);
-    }
-
     @Override
     public void periodic()
     {
@@ -113,9 +99,8 @@ public class AlgaeManipulator extends SubsystemBase
             {
                 atTargetPosition = true;
                 isPositioningStarted = false;
-                currentPosition = currentPosition == AlgaeManipulatorConstants.storedPivotPosition
-                    ? AlgaeManipulatorConstants.activePivotPosition
-                    : AlgaeManipulatorConstants.storedPivotPosition;
+                isPivotStored = !isPivotStored;
+                setPivotMotorSpeed(0.0);
             }
             else
             {
