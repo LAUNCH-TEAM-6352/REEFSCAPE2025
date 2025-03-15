@@ -35,7 +35,7 @@ public final class Constants
         public static final boolean isRollerMotorInverted = true; 
 
         public static final double storedPivotPosition = pivotMotorMinPosition;
-        public static final double activePivotPosition = 55;
+        public static final double activePivotPosition = 40;
 
         public static final class PIDConstants
         {
@@ -56,7 +56,7 @@ public final class Constants
         public static final IdleMode motorIdleMode = IdleMode.kBrake;
         public static final double winchMotorSpeed = 0.6;
         public static final boolean isMotorInverted = false;
-        public static final double maxPosition = 108;
+        public static final double maxPosition = 140;
         public static final double minPosition = 0;
         public static final int servoChannel = 0;
         public static final int ratchetEngagedPosition = 1500;
@@ -118,7 +118,7 @@ public final class Constants
         public static final int motorChannel = 48;
         public static final IdleMode motorIdleMode = IdleMode.kBrake;
         public static final boolean isMotorInverted = false;
-        public static final double maxPosition = 12.8;
+        public static final double maxPosition = 13.5;
         public static final double minPosition = 0;
 
         public static final class PIDConstants
