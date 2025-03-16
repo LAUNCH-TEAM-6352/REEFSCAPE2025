@@ -15,8 +15,6 @@ import frc.robot.subsystems.Climber;
  * A command for climbing.
  * 
  * This command assumes that the coral receiover tray has been moved out of the way.
- * 
- * TODO: Do we need to add a command for un-climbing?
  */
 public class Climb extends Command
 {
