@@ -61,11 +61,7 @@ public class CoralManipulator extends SubsystemBase
             if (motor == leftRollerMotor)
             {
                 config.inverted(CoralManipulatorConstants.isLeftRollerMotorInverted);
-            }
-            else
-            {
-                config.follow(leftRollerMotor.getDeviceId(), true);
-            }
+            }            
 
             motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
             motor.clearFaults();
@@ -74,7 +70,13 @@ public class CoralManipulator extends SubsystemBase
 
     public void setRollerSpeed(double speed)
     {
-        leftRollerMotor.set(speed);
+        setRollerSpeed(speed, speed);
+    }
+
+    public void setRollerSpeed (double leftSpeed, double rightSpeed)
+    {
+        leftRollerMotor.set(leftSpeed);
+        rightRollerMotor.set(rightSpeed);
     }
 
     public void stop()
@@ -120,6 +122,11 @@ public class CoralManipulator extends SubsystemBase
         rollerState = RollerState.EJECT;
         setRollerSpeed(SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey, CoralManipulatorConstants.rollerMotorEjectSpeed));
         extraTimeSecs = SmartDashboard.getNumber(CoralManipulatorKeys.extraTimeSecsKey, CoralManipulatorConstants.extraTimeSecs);
+    }
+
+    public void ejectL1()
+    {
+    
     }
 
     @Override

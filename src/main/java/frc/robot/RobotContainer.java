@@ -217,6 +217,8 @@ public class RobotContainer
 
         commandCodriverGamepad.rightBumper()
             .onTrue(new InstantCommand(() -> coralManipulator.ejectCoral()));
+        commandCodriverGamepad.b()
+            .onTrue(new InstantCommand(() -> coralManipulator.ejectL1()));
     }
 
     private void configureBindings(CoralReceiver coralReceiver)
