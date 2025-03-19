@@ -103,6 +103,8 @@ public final class Constants
         public static final double rollerMotorIntakeSpeed = 0.15;
         public static final double rollerMotorBackupSpeed = -0.2;
         public static final double rollerMotorEjectSpeed = 0.3;
+        public static final double leftRollerMotorL1EjectSpeed = 0.3;
+        public static final double rightRollerMotorL1EjectSpeed = 0.2;
         public static final double extraTimeSecs = 1.0;
 
         public static final int entranceOpticalSensorPort = 0;
@@ -146,6 +148,8 @@ public final class Constants
             public static final String rollerMotorIntakeSpeedKey = "Coral Intk Spd";
             public static final String rollerMotorBackupSpeedKey = "Coral Bckp Spd";
             public static final String rollerMotorEjectSpeedKey = "Coral Ejct Spd";
+            public static final String leftRollerMotorL1EjectSpeedKey = "L1 Left Coral Ejct Spd";
+            public static final String rightRollerMotorL1EjectSpeedKey = "L1 Right Coral Ejct Spd";
             public static final String opticalSensorVoltageThresholdKey = "Optical Sensor";
             public static final String extraTimeSecsKey = "Extra Time";
         }
