@@ -25,7 +25,7 @@ public final class Constants
         public static final IdleMode pivotMotorIdleMode = IdleMode.kBrake;
         public static final boolean isPivotMotorInverted = true;
         public static final double pivotMotorMinPosition = 0;
-        public static final double pivotMotorMaxPosition = 68;
+        public static final double pivotMotorMaxPosition = 75;
         public static final double pivotMotorMaxSpeed = .5;
 
         public static final int rollerMotorChannel = 46;
@@ -193,8 +193,8 @@ public final class Constants
             public static final double kD = 0.0;
             public static final int kIZ = 0;
             public static final double kFF = 0;
-            public static final double minOutput = -0.25;
-            public static final double maxOutput = 0.25;
+            public static final double minOutput = -0.3;
+            public static final double maxOutput = 0.3;
             public static final double tolerance = 0.5;
         }
     }
