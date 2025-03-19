@@ -61,7 +61,12 @@ public class CoralManipulator extends SubsystemBase
             if (motor == leftRollerMotor)
             {
                 config.inverted(CoralManipulatorConstants.isLeftRollerMotorInverted);
-            }            
+            }
+            else 
+            {
+                config.inverted(CoralManipulatorConstants.isRightRollerMotorInverted);
+            }
+
 
             motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
             motor.clearFaults();

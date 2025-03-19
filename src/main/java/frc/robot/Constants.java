@@ -103,8 +103,8 @@ public final class Constants
         public static final double rollerMotorIntakeSpeed = 0.15;
         public static final double rollerMotorBackupSpeed = -0.2;
         public static final double rollerMotorEjectSpeed = 0.3;
-        public static final double leftRollerMotorL1EjectSpeed = 0.3;
-        public static final double rightRollerMotorL1EjectSpeed = 0.2;
+        public static final double leftRollerMotorL1EjectSpeed = 0.25;
+        public static final double rightRollerMotorL1EjectSpeed = 0.0;
         public static final double extraTimeSecs = 1.0;
 
         public static final int entranceOpticalSensorPort = 0;
@@ -112,7 +112,7 @@ public final class Constants
         public static final double opticalSensorVoltageThreshold = 0.8;
 
         public static final boolean isLeftRollerMotorInverted = false;
-        public static final boolean isRightRollerMotorInverted = false;
+        public static final boolean isRightRollerMotorInverted = true;
     }
 
     public static class CoralReceiverConstants

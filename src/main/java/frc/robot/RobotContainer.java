@@ -198,7 +198,7 @@ public class RobotContainer
             return;
         }
 
-        commandCodriverGamepad.leftStick()
+        commandCodriverGamepad.rightStick()
             .onTrue(new MoveAlgaeManipulatorWithGamepad(algaeManipulator, codriverGamepad));
 
         commandCodriverGamepad.x()
@@ -253,7 +253,7 @@ public class RobotContainer
         {
             return;
         }
-        commandCodriverGamepad.rightStick()
+        commandCodriverGamepad.leftStick()
             .onTrue(new MoveElevatorWithGamepad(elevator, codriverGamepad));
 
         commandCodriverGamepad.a().onTrue(new MoveElevatorToCoralPosition(elevator, codriverGamepad, ElevatorKeys.toleranceKey));
@@ -290,6 +290,8 @@ public class RobotContainer
         SmartDashboard.putNumber(CoralManipulatorKeys.opticalSensorVoltageThresholdKey,
             CoralManipulatorConstants.opticalSensorVoltageThreshold);
         SmartDashboard.putNumber(CoralManipulatorKeys.extraTimeSecsKey, CoralManipulatorConstants.extraTimeSecs);
+        SmartDashboard.putNumber(CoralManipulatorKeys.leftRollerMotorL1EjectSpeedKey, CoralManipulatorConstants.leftRollerMotorL1EjectSpeed);
+        SmartDashboard.putNumber(CoralManipulatorKeys.rightRollerMotorL1EjectSpeedKey, CoralManipulatorConstants.rightRollerMotorL1EjectSpeed);
     }
 
     private void configureSmartDashboard(Elevator elevator)
