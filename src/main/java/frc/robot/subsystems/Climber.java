@@ -73,6 +73,11 @@ public class Climber extends SubsystemBase
         currentServoPosition = position;
     }
 
+    public boolean isRatchetEngaged()
+    {
+        return currentServoPosition == ClimberConstants.ratchetEngagedPosition;
+    }
+
     public double getPosition()
     {
         return winchMotor.getEncoder().getPosition();
@@ -89,6 +94,6 @@ public class Climber extends SubsystemBase
         // This method will be called once per scheduler run
         SmartDashboard.putNumber("Climber RPM", winchMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("Climber Pos", winchMotor.getEncoder().getPosition()); 
-        SmartDashboard.putBoolean("Good To Climb", currentServoPosition == ClimberConstants.ratchetEngagedPosition);
+        SmartDashboard.putBoolean("Good To Climb", isRatchetEngaged());
     }
 }

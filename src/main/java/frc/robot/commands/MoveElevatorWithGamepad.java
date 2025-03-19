@@ -36,7 +36,7 @@ public class MoveElevatorWithGamepad extends Command
     @Override
     public void execute()
     {
-        var speed = -gamepad.getRightY() * ElevatorConstants.maxManualMotorSpeed;
+        var speed = -gamepad.getLeftY() * ElevatorConstants.maxManualMotorSpeed;
         var position = elevator.getPosition();
         if ((speed < 0 && position <= ElevatorConstants.minPosition) ||
             (speed > 0 && position >= ElevatorConstants.maxPosition))

@@ -34,7 +34,7 @@ public class MoveAlgaeManipulatorWithGamepad extends Command
     @Override
     public void execute()
     {
-        var speed = gamepad.getLeftY() * AlgaeManipulatorConstants.pivotMotorMaxSpeed;
+        var speed = gamepad.getRightY() * AlgaeManipulatorConstants.pivotMotorMaxSpeed;
         var position = algaeManipulator.getPivotPosition();
         if ((speed < 0 && position <= AlgaeManipulatorConstants.storedPivotPosition) ||
             (speed > 0 && position >= AlgaeManipulatorConstants.activePivotPosition))

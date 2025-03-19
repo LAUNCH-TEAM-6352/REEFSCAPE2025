@@ -62,10 +62,11 @@ public class CoralManipulator extends SubsystemBase
             {
                 config.inverted(CoralManipulatorConstants.isLeftRollerMotorInverted);
             }
-            else
+            else 
             {
-                config.follow(leftRollerMotor.getDeviceId(), true);
+                config.inverted(CoralManipulatorConstants.isRightRollerMotorInverted);
             }
+
 
             motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
             motor.clearFaults();
@@ -74,7 +75,13 @@ public class CoralManipulator extends SubsystemBase
 
     public void setRollerSpeed(double speed)
     {
-        leftRollerMotor.set(speed);
+        setRollerSpeed(speed, speed);
+    }
+
+    public void setRollerSpeed (double leftSpeed, double rightSpeed)
+    {
+        leftRollerMotor.set(leftSpeed);
+        rightRollerMotor.set(rightSpeed);
     }
 
     public void stop()
@@ -115,11 +122,20 @@ public class CoralManipulator extends SubsystemBase
         setRollerSpeed(SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorIntakeSpeedKey, CoralManipulatorConstants.rollerMotorIntakeSpeed));
     }
 
+    //Used for L2, L3, and L4
     public void ejectCoral()
     {
         rollerState = RollerState.EJECT;
         setRollerSpeed(SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey, CoralManipulatorConstants.rollerMotorEjectSpeed));
         extraTimeSecs = SmartDashboard.getNumber(CoralManipulatorKeys.extraTimeSecsKey, CoralManipulatorConstants.extraTimeSecs);
+    }
+
+    public void ejectL1()
+    {
+        rollerState = RollerState.EJECT;
+        setRollerSpeed(SmartDashboard.getNumber(CoralManipulatorKeys.leftRollerMotorL1EjectSpeedKey, CoralManipulatorConstants.leftRollerMotorL1EjectSpeed),SmartDashboard.getNumber(CoralManipulatorKeys.rightRollerMotorL1EjectSpeedKey, CoralManipulatorConstants.rightRollerMotorL1EjectSpeed));
+        extraTimeSecs = SmartDashboard.getNumber(CoralManipulatorKeys.extraTimeSecsKey, CoralManipulatorConstants.extraTimeSecs);
+    
     }
 
     @Override

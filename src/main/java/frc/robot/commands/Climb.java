@@ -46,11 +46,16 @@ public class Climb extends Command
     {
         var speed = this.speed;
         var position = climber.getPosition();
-        if ((speed < 0 && position <= ClimberConstants.minPosition) ||
-            (speed > 0 && position >= ClimberConstants.maxPosition))
+
+        if (!climber.isRatchetEngaged())
+        {
+            gamepad.setRumble(RumbleType.kBothRumble, 1);
+            speed = 0;
+        }
+        else if ((speed < 0 && position <= ClimberConstants.minPosition) ||
+                (speed > 0 && position >= ClimberConstants.maxPosition))
         {
             speed = 0;
-            gamepad.setRumble(RumbleType.kBothRumble, 1);
         }
         else
         {
@@ -64,6 +69,7 @@ public class Climb extends Command
     public void end(boolean interrupted)
     {
         climber.stop();
+        gamepad.setRumble(RumbleType.kBothRumble, 0);
     }
 
     // Returns true when the command should end.
