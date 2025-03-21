@@ -35,7 +35,7 @@ public final class Constants
         public static final boolean isRollerMotorInverted = true; 
 
         public static final double storedPivotPosition = pivotMotorMinPosition;
-        public static final double activePivotPosition = 40;
+        public static final double activePivotPosition = 45;
 
         public static final class PIDConstants
         {
@@ -76,7 +76,7 @@ public final class Constants
     {
         Intake(0.0),
         Reef1(10.0),
-        Reef2(19.5),
+        Reef2(18.7),
         Reef3(34.0),
         Reef4(53.0);
 
@@ -198,7 +198,7 @@ public final class Constants
             public static final int kIZ = 0;
             public static final double kFF = 0;
             public static final double minOutput = -0.3;
-            public static final double maxOutput = 0.3;
+            public static final double maxOutput = 0.4;
             public static final double tolerance = 0.5;
         }
     }
