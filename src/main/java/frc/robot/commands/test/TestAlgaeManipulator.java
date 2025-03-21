@@ -11,7 +11,7 @@ import frc.robot.Constants.TestConstants;
 import frc.robot.subsystems.AlgaeManipulator;
 
 /**
- * Tests the CoralManipulator subsystem.
+ * Tests the AlgaeManipulator subsystem.
  */
 public class TestAlgaeManipulator extends SequentialCommandGroup
 {
