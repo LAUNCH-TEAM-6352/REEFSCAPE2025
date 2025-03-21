@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.Optional;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ClimberConstants;
+import frc.robot.Constants.CoralLevel;
 import frc.robot.Constants.CoralManipulatorConstants;
 import frc.robot.Constants.DashboardConstants.ClimberKeys;
 import frc.robot.Constants.DashboardConstants.CoralManipulatorKeys;
@@ -164,6 +166,10 @@ public class RobotContainer
     private void configurePathPlannerNamedCommands()
     {
         // EX: NamedCommands.registerCommand("Shoot Wait", new Wait(AutoKeys.shootWaitTime));
+        NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
+            new InstantCommand(() -> elevator.get().setPosition(CoralLevel.Reef4.elevatorPosition(), ElevatorConstants.PIDConstants.tolerance)),
+            new WaitCommand(TestConstants.instantInBetweenSecs),
+            new InstantCommand(() -> coralManipulator.get().ejectCoral())));
     }
 
     /**
@@ -256,7 +262,8 @@ public class RobotContainer
         commandCodriverGamepad.leftStick()
             .onTrue(new MoveElevatorWithGamepad(elevator, codriverGamepad));
 
-        commandCodriverGamepad.a().onTrue(new MoveElevatorToCoralPosition(elevator, codriverGamepad, ElevatorKeys.toleranceKey));
+        commandCodriverGamepad.a()
+            .onTrue(new MoveElevatorToCoralPosition(elevator, codriverGamepad, ElevatorKeys.toleranceKey));
     }
 
     private void configureSmartDashboard()
@@ -284,14 +291,19 @@ public class RobotContainer
 
     private void configureSmartDashboard(CoralManipulator coralManipulator)
     {
-        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorIntakeSpeedKey, CoralManipulatorConstants.rollerMotorIntakeSpeed);
-        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorBackupSpeedKey, CoralManipulatorConstants.rollerMotorBackupSpeed);
-        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey, CoralManipulatorConstants.rollerMotorEjectSpeed);
+        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorIntakeSpeedKey,
+            CoralManipulatorConstants.rollerMotorIntakeSpeed);
+        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorBackupSpeedKey,
+            CoralManipulatorConstants.rollerMotorBackupSpeed);
+        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey,
+            CoralManipulatorConstants.rollerMotorEjectSpeed);
         SmartDashboard.putNumber(CoralManipulatorKeys.opticalSensorVoltageThresholdKey,
             CoralManipulatorConstants.opticalSensorVoltageThreshold);
         SmartDashboard.putNumber(CoralManipulatorKeys.extraTimeSecsKey, CoralManipulatorConstants.extraTimeSecs);
-        SmartDashboard.putNumber(CoralManipulatorKeys.leftRollerMotorL1EjectSpeedKey, CoralManipulatorConstants.leftRollerMotorL1EjectSpeed);
-        SmartDashboard.putNumber(CoralManipulatorKeys.rightRollerMotorL1EjectSpeedKey, CoralManipulatorConstants.rightRollerMotorL1EjectSpeed);
+        SmartDashboard.putNumber(CoralManipulatorKeys.leftRollerMotorL1EjectSpeedKey,
+            CoralManipulatorConstants.leftRollerMotorL1EjectSpeed);
+        SmartDashboard.putNumber(CoralManipulatorKeys.rightRollerMotorL1EjectSpeedKey,
+            CoralManipulatorConstants.rightRollerMotorL1EjectSpeed);
     }
 
     private void configureSmartDashboard(Elevator elevator)
@@ -309,9 +321,14 @@ public class RobotContainer
 
     private void configureAutoChooser(SendableChooser<Command> autoChooser)
     {
-        //Shoot Twice Autos
+        // Shoot Twice Autos
         autoChooser.addOption("Leave From Empty Side", new PathPlannerAuto("LeaveEmptySide"));
         autoChooser.addOption("Leave From Processor Side", new PathPlannerAuto("LeaveProcessorSide"));
+
+        //Score 
+        autoChooser.addOption("Score L4 Empty Side", new PathPlannerAuto("L4ScoreEmptySide"));
+        autoChooser.addOption("Score L4 Processor Side", new PathPlannerAuto("L4ScoreProcessorSide"));
+        autoChooser.addOption("Score L4 Middle", new PathPlannerAuto("L4ScoreMiddle"));
 
         SmartDashboard.putData("Auto Selection", autoChooser);
     }
@@ -322,7 +339,10 @@ public class RobotContainer
         if (driverGamepad != null)
         {
             driverHIDChooser.setDefaultOption("Drive with Gamepad",
-                new DriveWithGamepad(driveTrain.get(), driverGamepad, () -> { return isDrivingFieldRelative; }));
+                new DriveWithGamepad(driveTrain.get(), driverGamepad, () ->
+                {
+                    return isDrivingFieldRelative;
+                }));
             defaultSet = true;
         }
         if (driverJoystick != null)
@@ -330,12 +350,18 @@ public class RobotContainer
             if (!defaultSet)
             {
                 driverHIDChooser.setDefaultOption("Drive with Joystick",
-                    new DriveWithJoystick(driveTrain.get(), driverJoystick, () -> { return isDrivingFieldRelative; }));
+                    new DriveWithJoystick(driveTrain.get(), driverJoystick, () ->
+                    {
+                        return isDrivingFieldRelative;
+                    }));
             }
             else
             {
                 driverHIDChooser.addOption("Drive with Joystick",
-                    new DriveWithJoystick(driveTrain.get(), driverJoystick, () -> { return isDrivingFieldRelative; }));
+                    new DriveWithJoystick(driveTrain.get(), driverJoystick, () ->
+                    {
+                        return isDrivingFieldRelative;
+                    }));
             }
         }
         SmartDashboard.putData("Driver Input", driverHIDChooser);
@@ -379,17 +405,20 @@ public class RobotContainer
         if (coralManipulator.isPresent())
         {
             group.addCommands(
-                new TestCoralManipulator(coralManipulator.get(), 
-                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorIntakeSpeedKey, CoralManipulatorConstants.rollerMotorIntakeSpeed))
-                    .withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
+                new TestCoralManipulator(coralManipulator.get(),
+                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorIntakeSpeedKey,
+                        CoralManipulatorConstants.rollerMotorIntakeSpeed))
+                            .withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
 
-                new TestCoralManipulator(coralManipulator.get(), 
-                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorBackupSpeedKey, CoralManipulatorConstants.rollerMotorBackupSpeed))
-                    .withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
-                    
-                new TestCoralManipulator(coralManipulator.get(), 
-                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey, CoralManipulatorConstants.rollerMotorEjectSpeed))
-                    .withTimeout((TestConstants.coralManipulatorTimeoutSecs)));
+                new TestCoralManipulator(coralManipulator.get(),
+                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorBackupSpeedKey,
+                        CoralManipulatorConstants.rollerMotorBackupSpeed))
+                            .withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
+
+                new TestCoralManipulator(coralManipulator.get(),
+                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey,
+                        CoralManipulatorConstants.rollerMotorEjectSpeed))
+                            .withTimeout((TestConstants.coralManipulatorTimeoutSecs)));
         }
 
         if (coralReceiver.isPresent())

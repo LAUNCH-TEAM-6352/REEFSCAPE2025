@@ -37,7 +37,7 @@ public class MoveAlgaeManipulatorWithGamepad extends Command
         var speed = gamepad.getRightY() * AlgaeManipulatorConstants.pivotMotorMaxSpeed;
         var position = algaeManipulator.getPivotPosition();
         if ((speed < 0 && position <= AlgaeManipulatorConstants.storedPivotPosition) ||
-            (speed > 0 && position >= AlgaeManipulatorConstants.activePivotPosition))
+            (speed > 0 && position >= AlgaeManipulatorConstants.pivotMotorMaxPosition))
         {
             speed = 0;
             gamepad.setRumble(RumbleType.kBothRumble, 1);
