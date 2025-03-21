@@ -13,7 +13,9 @@ import frc.robot.subsystems.CoralManipulator;
 public class TestCoralManipulator extends Command
 {
     private final CoralManipulator coralManipulator;
-    private double speed;
+    private Double speed = null;
+    private Double leftSpeed = null;
+    private Double rightSpeed = null;
 
     /** Creates a new TestCoralManipulator. */
     public TestCoralManipulator(CoralManipulator coralManipulator, double speed)
@@ -24,18 +26,41 @@ public class TestCoralManipulator extends Command
         addRequirements(coralManipulator);
     }
 
+    public TestCoralManipulator(CoralManipulator coralManipulator, double leftSpeed, double rightSpeed)
+    {
+        // Use addRequirements() here to declare subsystem dependencies.
+        this.coralManipulator = coralManipulator;
+        this.leftSpeed = leftSpeed;
+        this.rightSpeed = rightSpeed;
+        addRequirements(coralManipulator);
+    }
+
     // Called when the command is initially scheduled.
     @Override
     public void initialize()
     {
-        System.out.println("Testing Coral Manipulator: " + speed);
+        if (speed != null)
+        {
+            System.out.println("Testing Coral Manipulator: " + speed);
+        }
+        else
+        {
+            System.out.println("Testing Coral Manipulator: " + leftSpeed + ", " + rightSpeed);
+        }
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute()
     {
-        coralManipulator.setRollerSpeed(speed);
+        if (speed != null)
+        {
+            coralManipulator.setRollerSpeed(speed);
+        }
+        else
+        {
+            coralManipulator.setRollerSpeed(leftSpeed, rightSpeed);
+        }
     }
 
     // Called once the command ends or is interrupted.

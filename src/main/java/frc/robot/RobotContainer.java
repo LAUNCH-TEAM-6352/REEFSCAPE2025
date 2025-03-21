@@ -35,6 +35,7 @@ import frc.robot.commands.DriveWithJoystick;
 import frc.robot.commands.MoveAlgaeManipulatorWithGamepad;
 import frc.robot.commands.MoveElevatorToCoralPosition;
 import frc.robot.commands.MoveElevatorWithGamepad;
+import frc.robot.commands.test.TestAlgaeManipulator;
 import frc.robot.commands.test.TestClimber;
 import frc.robot.commands.test.TestCoralManipulator;
 import frc.robot.commands.test.TestCoralReceiver;
@@ -424,6 +425,11 @@ public class RobotContainer
         if (coralReceiver.isPresent())
         {
             group.addCommands(new TestCoralReceiver(coralReceiver.get()));
+        }
+
+        if (algaeManipulator.isPresent())
+        {
+            group.addCommands(new TestAlgaeManipulator(algaeManipulator.get()));
         }
 
         return group;
