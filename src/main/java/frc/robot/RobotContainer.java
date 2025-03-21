@@ -387,7 +387,7 @@ public class RobotContainer
 
         // Wait for startup messages to be logged to driver station console:
         group.addCommands(new WaitCommand(5));
-
+ 
         if (driveTrain.isPresent())
         {
             group.addCommands(new TestDriveTrain(driveTrain.get()));
@@ -419,6 +419,13 @@ public class RobotContainer
                 new TestCoralManipulator(coralManipulator.get(),
                     SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey,
                         CoralManipulatorConstants.rollerMotorEjectSpeed))
+                            .withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
+                
+                new TestCoralManipulator(coralManipulator.get(),
+                    SmartDashboard.getNumber(CoralManipulatorKeys.leftRollerMotorL1EjectSpeedKey,
+                        CoralManipulatorConstants.leftRollerMotorL1EjectSpeed),
+                    SmartDashboard.getNumber(CoralManipulatorKeys.rightRollerMotorL1EjectSpeedKey,
+                        CoralManipulatorConstants.rightRollerMotorL1EjectSpeed))
                             .withTimeout((TestConstants.coralManipulatorTimeoutSecs)));
         }
 
