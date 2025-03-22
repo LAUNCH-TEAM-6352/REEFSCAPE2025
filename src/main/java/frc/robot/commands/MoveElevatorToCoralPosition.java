@@ -23,13 +23,18 @@ public class MoveElevatorToCoralPosition extends Command
     private final String toleranceKey;
 
     // Maps from gamepad D-pad values to coral levels.
+    // Note the handling of intermediate "headings" assume intended elevator level.
     private final HashMap<Integer, CoralLevel> coralLevels = new HashMap<>(){
         {
             put(-1, CoralLevel.Intake);
             put(0, CoralLevel.Reef2);
+            put(45, CoralLevel.Reef2);
             put(90, CoralLevel.Reef3);
+            put(135, CoralLevel.Reef4);
             put(180, CoralLevel.Reef4);
+            put(225, CoralLevel.Reef4);
             put(270, CoralLevel.Reef1);
+            put(315, CoralLevel.Reef2);
         }
     };
 
