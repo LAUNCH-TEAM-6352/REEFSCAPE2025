@@ -4,6 +4,7 @@ import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.DashboardConstants.DriveKeys;
 import frc.robot.subsystems.DriveTrain;
 
 /**
@@ -29,7 +30,7 @@ public class DriveWithJoystick extends DriveWithGamepadOrJoystick
 
     public DriveWithJoystick(DriveTrain driveTrain, Joystick driverController, BooleanSupplier isDrivingFieldRelative)
     {
-        super(driveTrain, driverController, isDrivingFieldRelative);
+        super(driveTrain, driverController, isDrivingFieldRelative, DriveKeys.nudgeSpeedKey);
         this.driverController = driverController;
     }
 
