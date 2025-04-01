@@ -4,76 +4,50 @@
 
 package frc.robot.commands.test;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.CoralManipulatorConstants;
+import frc.robot.Constants.DashboardConstants.CoralManipulatorKeys;
+import frc.robot.Constants.TestConstants;
 import frc.robot.subsystems.CoralManipulator;
 
 /**
  * Tests the CoralManipulator subsystem.
  */
-public class TestCoralManipulator extends Command
+public class TestCoralManipulator extends SequentialCommandGroup
 {
-    private final CoralManipulator coralManipulator;
-    private Double speed = null;
-    private Double leftSpeed = null;
-    private Double rightSpeed = null;
-
     /** Creates a new TestCoralManipulator. */
-    public TestCoralManipulator(CoralManipulator coralManipulator, double speed)
+    public TestCoralManipulator(CoralManipulator coralManipulator)
     {
-        // Use addRequirements() here to declare subsystem dependencies.
-        this.coralManipulator = coralManipulator;
-        this.speed = speed;
         addRequirements(coralManipulator);
-    }
+        addCommands(
+            new InstantCommand(() -> System.out.println("Testing Coral Manipulator: Intake")),
+            new StartEndCommand(
+                () -> coralManipulator.setRollerSpeed(SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorIntakeSpeedKey, CoralManipulatorConstants.rollerMotorIntakeSpeed)),
+                () -> coralManipulator.stop()).withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
+            new WaitCommand(TestConstants.betweenTimeSecs),
 
-    public TestCoralManipulator(CoralManipulator coralManipulator, double leftSpeed, double rightSpeed)
-    {
-        // Use addRequirements() here to declare subsystem dependencies.
-        this.coralManipulator = coralManipulator;
-        this.leftSpeed = leftSpeed;
-        this.rightSpeed = rightSpeed;
-        addRequirements(coralManipulator);
-    }
+            new InstantCommand(() -> System.out.println("Testing Coral Manipulator: Backup")),
+            new StartEndCommand(
+                () -> coralManipulator.setRollerSpeed(SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorBackupSpeedKey, CoralManipulatorConstants.rollerMotorBackupSpeed)),
+                () -> coralManipulator.stop()).withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
+            new WaitCommand(TestConstants.betweenTimeSecs),
 
-    // Called when the command is initially scheduled.
-    @Override
-    public void initialize()
-    {
-        if (speed != null)
-        {
-            System.out.println("Testing Coral Manipulator: " + speed);
-        }
-        else
-        {
-            System.out.println("Testing Coral Manipulator: " + leftSpeed + ", " + rightSpeed);
-        }
-    }
+            new InstantCommand(() -> System.out.println("Testing Coral Manipulator: Eject")),
+            new StartEndCommand(
+                () -> coralManipulator.setRollerSpeed(SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey, CoralManipulatorConstants.rollerMotorEjectSpeed)),
+                () -> coralManipulator.stop()).withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
+            new WaitCommand(TestConstants.betweenTimeSecs),
 
-    // Called every time the scheduler runs while the command is scheduled.
-    @Override
-    public void execute()
-    {
-        if (speed != null)
-        {
-            coralManipulator.setRollerSpeed(speed);
-        }
-        else
-        {
-            coralManipulator.setRollerSpeed(leftSpeed, rightSpeed);
-        }
-    }
-
-    // Called once the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted)
-    {
-        coralManipulator.stop();
-    }
-
-    // Returns true when the command should end.
-    @Override
-    public boolean isFinished()
-    {
-        return false;
+            new InstantCommand(() -> System.out.println("Testing Coral Manipulator: Eject L1")),
+            new StartEndCommand(
+                () -> coralManipulator.setRollerSpeed(SmartDashboard.getNumber(CoralManipulatorKeys.leftRollerMotorL1EjectSpeedKey, CoralManipulatorConstants.leftRollerMotorL1EjectSpeed),
+                    SmartDashboard.getNumber(CoralManipulatorKeys.rightRollerMotorL1EjectSpeedKey, CoralManipulatorConstants.rightRollerMotorL1EjectSpeed)),
+                () -> coralManipulator.stop()).withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
+            new WaitCommand(TestConstants.betweenTimeSecs)
+        );
     }
 }

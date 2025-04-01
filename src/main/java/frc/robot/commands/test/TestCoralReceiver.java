@@ -21,11 +21,11 @@ public class TestCoralReceiver extends SequentialCommandGroup
         addCommands(
             new InstantCommand(() -> System.out.println("Testing Coral Receiver: Raising")),
             new InstantCommand(() -> coralReceiver.move()),
-            new WaitCommand(TestConstants.instantInBetweenSecs),
+            new WaitCommand(TestConstants.instantBetweenTimeSecs),
 
             new InstantCommand(() -> System.out.println("Testing Coral Receiver: Lowering")),
             new InstantCommand(() -> coralReceiver.move()),
-            new WaitCommand(TestConstants.instantInBetweenSecs)
+            new WaitCommand(TestConstants.instantBetweenTimeSecs)
         );
     }
 

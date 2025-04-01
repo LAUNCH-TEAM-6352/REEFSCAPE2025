@@ -50,6 +50,11 @@ public final class Constants
         }
     }
 
+    public static class AutoConstants
+    {
+        public static final double elevatorMoveTimeSecs = 4.0;
+    }
+
     public static class ClimberConstants
     {
         public static final int winchMotorChannel = 47;
@@ -69,7 +74,6 @@ public final class Constants
             public static final double positionConversionFactor = 1; // One position per rotation
             public static final double velocityConversionFactor = 1; // Rotations per minute
         }
-
     }
 
     public enum CoralLevel
@@ -235,8 +239,8 @@ public final class Constants
 
     public static class TestConstants
     {
-        public static final double inbetweenTimeSecs = 1.0;
-        public static final double instantInBetweenSecs = 4.0;
+        public static final double betweenTimeSecs = 1.0;
+        public static final double instantBetweenTimeSecs = 3.0;
 
         public static final double swerveModuleMotorTimeoutSecs = 5;
         public static final double swerveModuleDriveForwardPercentOutput = 0.25;

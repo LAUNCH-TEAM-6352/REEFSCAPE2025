@@ -17,22 +17,18 @@ public class TestSwerveDriveModule extends SequentialCommandGroup
     /** Creates a new TestSwerveDriverModule. */
     public TestSwerveDriveModule(DriveTrain driveTrain, String moduleName)
     {
-        // Add your commands in the addCommands() call, e.g.
-        // addCommands(new FooCommand(), new BarCommand());
-        addCommands(
-
-        
+        addCommands(       
             new TestSwerveModuleDriveMotor(driveTrain, moduleName, TestConstants.swerveModuleDriveForwardPercentOutput).withTimeout(TestConstants.swerveModuleMotorTimeoutSecs),
-            new WaitCommand(TestConstants.inbetweenTimeSecs),
+            new WaitCommand(TestConstants.betweenTimeSecs),
 
             new TestSwerveModuleDriveMotor(driveTrain, moduleName, TestConstants.swerveModuleDriveReversePercentOutput).withTimeout(TestConstants.swerveModuleMotorTimeoutSecs),
-            new WaitCommand(TestConstants.inbetweenTimeSecs),
+            new WaitCommand(TestConstants.betweenTimeSecs),
 
             new TestSwerveModuleAngleMotor(driveTrain, moduleName, TestConstants.swerveModuleAngleCcwPercentOutput).withTimeout(TestConstants.swerveModuleMotorTimeoutSecs),
-            new WaitCommand(TestConstants.inbetweenTimeSecs),
+            new WaitCommand(TestConstants.betweenTimeSecs),
 
             new TestSwerveModuleAngleMotor(driveTrain, moduleName, TestConstants.swerveModuleAngleCwPercentOutput).withTimeout(TestConstants.swerveModuleMotorTimeoutSecs),
-            new WaitCommand(TestConstants.inbetweenTimeSecs)
+            new WaitCommand(TestConstants.betweenTimeSecs)
         );
     }
 }

@@ -21,25 +21,25 @@ public class TestElevator extends SequentialCommandGroup
     {
         addCommands(
             new TestElevatorCoralPosition(elevator, CoralLevel.Intake, ElevatorKeys.toleranceKey),
-            new WaitCommand(TestConstants.inbetweenTimeSecs),
+            new WaitCommand(TestConstants.betweenTimeSecs),
 
             new TestElevatorCoralPosition(elevator, CoralLevel.Reef1, ElevatorKeys.toleranceKey),
-            new WaitCommand(TestConstants.inbetweenTimeSecs),
+            new WaitCommand(TestConstants.betweenTimeSecs),
 
             new TestElevatorCoralPosition(elevator, CoralLevel.Reef2, ElevatorKeys.toleranceKey),
-            new WaitCommand(TestConstants.inbetweenTimeSecs),
+            new WaitCommand(TestConstants.betweenTimeSecs),
 
             new TestElevatorCoralPosition(elevator, CoralLevel.Reef3, ElevatorKeys.toleranceKey),
-            new WaitCommand(TestConstants.inbetweenTimeSecs),
+            new WaitCommand(TestConstants.betweenTimeSecs),
 
             new TestElevatorCoralPosition(elevator, CoralLevel.Reef4, ElevatorKeys.toleranceKey),
-            new WaitCommand(TestConstants.inbetweenTimeSecs),
+            new WaitCommand(TestConstants.betweenTimeSecs),
 
             new TestElevatorArbitraryPosition(elevator, ElevatorConstants.maxPosition, ElevatorKeys.toleranceKey),
-            new WaitCommand(TestConstants.inbetweenTimeSecs),
+            new WaitCommand(TestConstants.betweenTimeSecs),
 
             new TestElevatorArbitraryPosition(elevator, ElevatorConstants.minPosition, ElevatorKeys.toleranceKey),
-            new WaitCommand(TestConstants.inbetweenTimeSecs)
+            new WaitCommand(TestConstants.betweenTimeSecs)
         );
     }
 };
