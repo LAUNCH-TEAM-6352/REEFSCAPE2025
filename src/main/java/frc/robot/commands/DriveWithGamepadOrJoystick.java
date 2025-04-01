@@ -7,6 +7,7 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
@@ -44,35 +45,22 @@ public abstract class DriveWithGamepadOrJoystick extends Command
     private final DriveTrain driveTrain;
     private final GenericHID driverController;
     private final BooleanSupplier isDrivingFieldRelativeSupplier;
+    private final String nudgeSpeedKey;
+    private static HashMap<Integer, Translation2d> nudgeTranslations;
 
     private boolean isDrivingFieldRelative;
 
     private Optional<Alliance> alliance;
 
-
-    // Maps from joystick/gamepad D-pad values to robot-oriented translation speeds for nudging the robot:
-    private static final HashMap<Integer, Translation2d> nudgeTranslations = new HashMap<>()
-    {
-        {
-            put(0, new Translation2d(DriveConstants.nudgeSpeedMps, 0.0));
-            put(45, new Translation2d(DriveConstants.nudgeSpeedMps, -DriveConstants.nudgeSpeedMps));
-            put(90, new Translation2d(0.0, -DriveConstants.nudgeSpeedMps));
-            put(135, new Translation2d(-DriveConstants.nudgeSpeedMps, -DriveConstants.nudgeSpeedMps));
-            put(180, new Translation2d(-DriveConstants.nudgeSpeedMps, 0.0));
-            put(225, new Translation2d(-DriveConstants.nudgeSpeedMps, DriveConstants.nudgeSpeedMps));
-            put(270, new Translation2d(0.0, DriveConstants.nudgeSpeedMps));
-            put(315, new Translation2d(DriveConstants.nudgeSpeedMps, DriveConstants.nudgeSpeedMps));
-        }
-    };
-
     /**
      * Constructor for the DriveWithGamepadOrJoystick command.
      */
-    public DriveWithGamepadOrJoystick(DriveTrain driveTrain, GenericHID driverController, BooleanSupplier isDrivingFieldRelativeSupplier)
+    public DriveWithGamepadOrJoystick(DriveTrain driveTrain, GenericHID driverController, BooleanSupplier isDrivingFieldRelativeSupplier, String nudgeSpeedKey)
     {
         this.driveTrain = driveTrain;
         this.driverController = driverController;
         this.isDrivingFieldRelativeSupplier = isDrivingFieldRelativeSupplier;
+        this.nudgeSpeedKey = nudgeSpeedKey;
 
         // Specify subsystem dependencies (if any)
         addRequirements(driveTrain);
@@ -83,6 +71,22 @@ public abstract class DriveWithGamepadOrJoystick extends Command
     {
         alliance = DriverStation.getAlliance();
         isDrivingFieldRelative = isDrivingFieldRelativeSupplier.getAsBoolean();
+        double nudgeSpeed = SmartDashboard.getNumber(nudgeSpeedKey, DriveConstants.nudgeSpeedMps);
+
+        // Maps from joystick/gamepad D-pad values to robot-oriented translation speeds for nudging the robot:
+        nudgeTranslations = new HashMap<>()
+        {
+            {
+                put(0, new Translation2d(nudgeSpeed, 0.0));
+                put(45, new Translation2d(nudgeSpeed, -nudgeSpeed));
+                put(90, new Translation2d(0.0, -nudgeSpeed));
+                put(135, new Translation2d(-nudgeSpeed, -nudgeSpeed));
+                put(180, new Translation2d(-nudgeSpeed, 0.0));
+                put(225, new Translation2d(-nudgeSpeed, nudgeSpeed));
+                put(270, new Translation2d(0.0, nudgeSpeed));
+                put(315, new Translation2d(nudgeSpeed, nudgeSpeed));
+            }
+        };
     }
 
     @Override

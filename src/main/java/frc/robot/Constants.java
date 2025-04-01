@@ -153,6 +153,12 @@ public final class Constants
             public static final String opticalSensorVoltageThresholdKey = "Optical Sensor";
             public static final String extraTimeSecsKey = "Extra Time";
         }
+
+        public static final class DriveKeys
+        {
+            public static final String nudgeSpeedKey = "Nudge Spd";
+        }
+
         public static final class ElevatorKeys
         {
             public static final String minOutputKey = "Min Output";
