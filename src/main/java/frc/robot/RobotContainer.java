@@ -48,11 +48,12 @@ import frc.robot.subsystems.Limelight;
 public class RobotContainer
 {
     // Subsystems:
+    // May need tyo make driveTrain private again
     private final Optional<DriveTrain> driveTrain;
     private final Optional<Climber> climber;
     private final Optional<CoralManipulator> coralManipulator;
     private final Optional<Elevator> elevator;
-    private final Optional <CoralReceiver> coralReceiver;
+    private final Optional<CoralReceiver> coralReceiver;
     private final Optional<Limelight> limelight;
 
     // OI devices:
@@ -127,7 +128,7 @@ public class RobotContainer
         coralReceiver = gameData.isBlank() || gameData.contains("-cr-")
             ? Optional.of(new CoralReceiver())
             : Optional.empty();
-        
+
         limelight = gameData.isBlank() || gameData.contains("-l-")
             ? Optional.of(new Limelight())
             : Optional.empty();
@@ -182,8 +183,8 @@ public class RobotContainer
         coralManipulator.ifPresent(this::configureBindings);
         elevator.ifPresent(this::configureBindings);
         coralReceiver.ifPresent(this::configureBindings);
-        
-        if(driveTrain.isPresent() && limelight.isPresent())
+
+        if (driveTrain.isPresent() && limelight.isPresent())
         {
             configureBindings(driveTrain.get(), limelight.get());
         }
@@ -213,7 +214,6 @@ public class RobotContainer
         commandCodriverGamepad.rightTrigger()
             .onTrue(new InstantCommand(() -> coralReceiver.moveUp()));
     }
-
 
     private void configureBindings(Climber climber)
     {
@@ -247,7 +247,8 @@ public class RobotContainer
         commandCodriverGamepad.rightStick()
             .onTrue(new MoveElevatorWithGamepad(elevator, codriverGamepad));
 
-        commandCodriverGamepad.a().onTrue(new MoveElevatorToPosition(elevator, codriverGamepad, ElevatorKeys.toleranceKey));
+        commandCodriverGamepad.a()
+            .onTrue(new MoveElevatorToPosition(elevator, codriverGamepad, ElevatorKeys.toleranceKey));
     }
 
     private void configureSmartDashboard()
@@ -273,9 +274,12 @@ public class RobotContainer
 
     private void configureSmartDashboard(CoralManipulator coralManipulator)
     {
-        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorIntakeSpeedKey, CoralManipulatorConstants.rollerMotorIntakeSpeed);
-        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorBackupSpeedKey, CoralManipulatorConstants.rollerMotorBackupSpeed);
-        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey, CoralManipulatorConstants.rollerMotorEjectSpeed);
+        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorIntakeSpeedKey,
+            CoralManipulatorConstants.rollerMotorIntakeSpeed);
+        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorBackupSpeedKey,
+            CoralManipulatorConstants.rollerMotorBackupSpeed);
+        SmartDashboard.putNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey,
+            CoralManipulatorConstants.rollerMotorEjectSpeed);
         SmartDashboard.putNumber(CoralManipulatorKeys.opticalSensorVoltageThresholdKey,
             CoralManipulatorConstants.opticalSensorVoltageThreshold);
         SmartDashboard.putNumber(CoralManipulatorKeys.extraTimeSecsKey, CoralManipulatorConstants.extraTimeSecs);
@@ -327,17 +331,20 @@ public class RobotContainer
         if (coralManipulator.isPresent())
         {
             group.addCommands(
-                new TestCoralManipulator(coralManipulator.get(), 
-                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorIntakeSpeedKey, CoralManipulatorConstants.rollerMotorIntakeSpeed))
-                    .withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
+                new TestCoralManipulator(coralManipulator.get(),
+                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorIntakeSpeedKey,
+                        CoralManipulatorConstants.rollerMotorIntakeSpeed))
+                            .withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
 
-                new TestCoralManipulator(coralManipulator.get(), 
-                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorBackupSpeedKey, CoralManipulatorConstants.rollerMotorBackupSpeed))
-                    .withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
-                    
-                new TestCoralManipulator(coralManipulator.get(), 
-                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey, CoralManipulatorConstants.rollerMotorEjectSpeed))
-                    .withTimeout((TestConstants.coralManipulatorTimeoutSecs)));
+                new TestCoralManipulator(coralManipulator.get(),
+                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorBackupSpeedKey,
+                        CoralManipulatorConstants.rollerMotorBackupSpeed))
+                            .withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
+
+                new TestCoralManipulator(coralManipulator.get(),
+                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey,
+                        CoralManipulatorConstants.rollerMotorEjectSpeed))
+                            .withTimeout((TestConstants.coralManipulatorTimeoutSecs)));
         }
 
         return group;

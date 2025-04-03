@@ -1,16 +1,10 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Limelight;
 
@@ -20,24 +14,18 @@ public class DriveToTarget extends Command
     private final Limelight limelight;
     private final DriveTrain driveTrain;
 
-    private final HolonomicDriveController holonomicController;
+    private final PIDController rangePIDController;
+    private final PIDController aimPIDController;
 
     public DriveToTarget(Limelight limelight, DriveTrain driveTrain)
     {
         this.limelight = limelight;
         this.driveTrain = driveTrain;
         addRequirements(limelight, driveTrain);
-        // aimPIDController = new PIDController(0.08, 0.035, 0.025);
-        // rangePIDController = new PIDController(0.15, 0.05, 0.4);
 
-        holonomicController = new HolonomicDriveController(
-            new PIDController(0.08, 0.035, 0.025), // X PID
-            new PIDController(0.15, 0.05, 0.4), // Y PID
-            new ProfiledPIDController(1.0, 0.0, 0.0,
-            new TrapezoidProfile.Constraints(DriveConstants.maxRpms, DriveConstants.maxAccelerationRpms)) // Theta
-        );
+        this.rangePIDController = new PIDController(0.7, 0, 0);
 
-        holonomicController.setTolerance(new Pose2d(DriveConstants.xTolerance, DriveConstants.yTolerance, new Rotation2d(DriveConstants.rotTolerance)));
+        this.aimPIDController = new PIDController(0.4, 0, 0.01);
     }
 
     @Override
@@ -63,15 +51,18 @@ public class DriveToTarget extends Command
     @Override
     public void execute()
     {
-        ChassisSpeeds speeds = holonomicController.calculate(
-            limelight.getRobotPose(),
-            limelight.getRobotPose().transformBy(limelight.getTargetPose(DriveConstants.targetOffset)),
-            DriveConstants.approachSpeed,
-            limelight.getRobotPose().transformBy(limelight.getTargetPose(DriveConstants.targetOffset)).getRotation());
+        double speedX = -rangePIDController.calculate(limelight.getRobotPose().getX(),
+            limelight.getRobotPose().plus(limelight.getTargetPose().minus(new Pose2d())).getX());
+        double speedY = rangePIDController.calculate(-limelight.getRobotPose().getY(),
+            limelight.getRobotPose().plus(limelight.getTargetPose().minus(new Pose2d())).getY());
+        double speedR = aimPIDController.calculate(limelight.getRobotPose().getRotation().getDegrees(),
+            limelight.getRobotPose().plus(limelight.getTargetPose().minus(new Pose2d())).getRotation().getDegrees());
+
+        ChassisSpeeds speeds = new ChassisSpeeds(speedX, speedY, speedR);
         Translation2d translation = new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
         double rotation = speeds.omegaRadiansPerSecond;
 
-        driveTrain.drive(translation, rotation, false);
+        driveTrain.drive(translation, rotation, true);
     }
 
     @Override
@@ -82,6 +73,6 @@ public class DriveToTarget extends Command
     @Override
     public boolean isFinished()
     {
-        return holonomicController.atReference();
+        return rangePIDController.atSetpoint() && aimPIDController.atSetpoint();
     }
 }

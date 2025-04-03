@@ -27,6 +27,8 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 public class DriveTrain extends SubsystemBase
 {
     public SwerveDrive swerveDrive;
+    public Pose2d curPose;
+    public PPHolonomicDriveController driveController;
 
     public DriveTrain()
     {
@@ -38,7 +40,8 @@ public class DriveTrain extends SubsystemBase
 
             swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(SwerveConstants.maxModuleSpeedMps);
 
-            SmartDashboard.putNumber("swerve/baseRadius", swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters());
+            SmartDashboard.putNumber("swerve/baseRadius",
+                swerveDrive.swerveDriveConfiguration.getDriveBaseRadiusMeters());
 
             setupPathPlanner();
 
@@ -67,9 +70,14 @@ public class DriveTrain extends SubsystemBase
         swerveDrive.drive(velocity);
     }
 
-
     public void setupPathPlanner()
     {
+        driveController = new PPHolonomicDriveController(
+            // Translation PID constants
+            PathPlannerConstants.TRANSLATION_PID,
+            // Rotation PID constants
+            PathPlannerConstants.ANGLE_PID);
+
         RobotConfig config = null;
         try
         {
@@ -87,11 +95,7 @@ public class DriveTrain extends SubsystemBase
             this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             (speeds, feedForwards) -> setChassisSpeeds(speeds), // Method that will drive the robot given ROBOT RELATIVE
 
-            new PPHolonomicDriveController(
-                // Translation PID constants
-                PathPlannerConstants.TRANSLATION_PID,
-                // Rotation PID constants
-                PathPlannerConstants.ANGLE_PID),
+            driveController,
             config,
             () ->
             {
@@ -157,9 +161,26 @@ public class DriveTrain extends SubsystemBase
     public void periodic()
     {
         // This method will be called once per scheduler run
-        SmartDashboard.putNumber("BL Steer Vel", swerveDrive.getModuleMap().get("backleft").getAngleMotor().getVelocity());
-        SmartDashboard.putNumber("BR Steer Vel", swerveDrive.getModuleMap().get("backright").getAngleMotor().getVelocity());
-        SmartDashboard.putNumber("FR Steer Vel", swerveDrive.getModuleMap().get("frontright").getAngleMotor().getVelocity());
-        SmartDashboard.putNumber("FL Steer Vel", swerveDrive.getModuleMap().get("frontleft").getAngleMotor().getVelocity());
+        SmartDashboard.putNumber("BL Steer Vel",
+            swerveDrive.getModuleMap().get("backleft").getAngleMotor().getVelocity());
+        SmartDashboard.putNumber("BR Steer Vel",
+            swerveDrive.getModuleMap().get("backright").getAngleMotor().getVelocity());
+        SmartDashboard.putNumber("FR Steer Vel",
+            swerveDrive.getModuleMap().get("frontright").getAngleMotor().getVelocity());
+        SmartDashboard.putNumber("FL Steer Vel",
+            swerveDrive.getModuleMap().get("frontleft").getAngleMotor().getVelocity());
+
+        // Update Pose periodically
+        curPose = getPose();
+        Limelight.getInstance().update();
+    }
+
+    private static DriveTrain instance;
+
+    public static DriveTrain getInstance()
+    {
+        if (instance == null)
+            instance = new DriveTrain();
+        return instance;
     }
 }
