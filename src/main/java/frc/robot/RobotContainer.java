@@ -266,7 +266,7 @@ public class RobotContainer
             .onTrue(new MoveElevatorWithGamepad(elevator, codriverGamepad));
 
         commandCodriverGamepad.a()
-            .onTrue(new MoveElevatorToCoralPosition(elevator, codriverGamepad, ElevatorKeys.toleranceKey));
+            .onTrue(new MoveElevatorToCoralPosition(elevator, codriverGamepad, ElevatorKeys.toleranceKey).withTimeout(2));
     }
 
     private void configureSmartDashboard()

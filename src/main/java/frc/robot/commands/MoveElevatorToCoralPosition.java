@@ -21,6 +21,7 @@ public class MoveElevatorToCoralPosition extends Command
     private final Elevator elevator;
     private final XboxController gamepad;
     private final String toleranceKey;
+    private CoralLevel targetCoralLevel;
 
     // Maps from gamepad D-pad values to coral levels.
     // Note the handling of intermediate "headings" assume intended elevator level.
@@ -53,8 +54,9 @@ public class MoveElevatorToCoralPosition extends Command
     @Override
     public void initialize()
     {
-         var tolerance = SmartDashboard.getNumber(toleranceKey, PIDConstants.tolerance);
-         elevator.setPosition(coralLevels.get(gamepad.getPOV()).elevatorPosition(), tolerance);
+        targetCoralLevel = coralLevels.get(gamepad.getPOV());
+        var tolerance = SmartDashboard.getNumber(toleranceKey, PIDConstants.tolerance);
+        elevator.setPosition(targetCoralLevel.elevatorPosition(), tolerance);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -68,6 +70,10 @@ public class MoveElevatorToCoralPosition extends Command
     @Override
     public void end(boolean interrupted)
     {
+        if (targetCoralLevel == CoralLevel.Intake)
+        {
+            elevator.resetPosition();
+        }
     }
 
     // Returns true when the command should end.

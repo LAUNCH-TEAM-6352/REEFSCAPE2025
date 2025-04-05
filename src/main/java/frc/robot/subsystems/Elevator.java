@@ -104,7 +104,7 @@ public class Elevator extends SubsystemBase
         return leaderMotor.getAlternateEncoder().getPosition();
     }
 
-    private void resetPosition()
+    public void resetPosition()
     {
         leaderMotor.getAlternateEncoder().setPosition(0);
     }
