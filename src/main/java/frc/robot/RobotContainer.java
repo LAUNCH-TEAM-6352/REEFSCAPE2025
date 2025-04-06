@@ -20,17 +20,17 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.CoralLevel;
 import frc.robot.Constants.CoralManipulatorConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DashboardConstants.ClimberKeys;
 import frc.robot.Constants.DashboardConstants.CoralManipulatorKeys;
 import frc.robot.Constants.DashboardConstants.DriveKeys;
 import frc.robot.Constants.DashboardConstants.ElevatorKeys;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Constants.TestConstants;
 import frc.robot.commands.Climb;
 import frc.robot.commands.DriveWithGamepad;
 import frc.robot.commands.DriveWithJoystick;
@@ -168,11 +168,10 @@ public class RobotContainer
      */
     private void configurePathPlannerNamedCommands()
     {
-        // EX: NamedCommands.registerCommand("Shoot Wait", new Wait(AutoKeys.shootWaitTime));
         NamedCommands.registerCommand("Score L4", new SequentialCommandGroup(
             new InstantCommand(() -> elevator.get().setPosition(CoralLevel.Reef4.elevatorPosition(),
                 ElevatorConstants.PIDConstants.tolerance)),
-            new WaitCommand(TestConstants.instantInBetweenSecs),
+            new WaitCommand(AutoConstants.elevatorMoveTimeSecs),
             new InstantCommand(() -> coralManipulator.get().ejectCoral())));
     }
 
@@ -267,7 +266,7 @@ public class RobotContainer
             .onTrue(new MoveElevatorWithGamepad(elevator, codriverGamepad));
 
         commandCodriverGamepad.a()
-            .onTrue(new MoveElevatorToCoralPosition(elevator, codriverGamepad, ElevatorKeys.toleranceKey));
+            .onTrue(new MoveElevatorToCoralPosition(elevator, codriverGamepad, ElevatorKeys.toleranceKey).withTimeout(ElevatorConstants.presetTimeoutSecs));
     }
 
     private void configureSmartDashboard()
@@ -402,28 +401,7 @@ public class RobotContainer
         }
         if (coralManipulator.isPresent())
         {
-            group.addCommands(
-                new TestCoralManipulator(coralManipulator.get(),
-                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorIntakeSpeedKey,
-                        CoralManipulatorConstants.rollerMotorIntakeSpeed))
-                            .withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
-
-                new TestCoralManipulator(coralManipulator.get(),
-                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorBackupSpeedKey,
-                        CoralManipulatorConstants.rollerMotorBackupSpeed))
-                            .withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
-
-                new TestCoralManipulator(coralManipulator.get(),
-                    SmartDashboard.getNumber(CoralManipulatorKeys.rollerMotorEjectSpeedKey,
-                        CoralManipulatorConstants.rollerMotorEjectSpeed))
-                            .withTimeout((TestConstants.coralManipulatorTimeoutSecs)),
-
-                new TestCoralManipulator(coralManipulator.get(),
-                    SmartDashboard.getNumber(CoralManipulatorKeys.leftRollerMotorL1EjectSpeedKey,
-                        CoralManipulatorConstants.leftRollerMotorL1EjectSpeed),
-                    SmartDashboard.getNumber(CoralManipulatorKeys.rightRollerMotorL1EjectSpeedKey,
-                        CoralManipulatorConstants.rightRollerMotorL1EjectSpeed))
-                            .withTimeout((TestConstants.coralManipulatorTimeoutSecs)));
+            group.addCommands(new TestCoralManipulator(coralManipulator.get()));
         }
         if (coralReceiver.isPresent())
         {
@@ -433,7 +411,6 @@ public class RobotContainer
         {
             group.addCommands(new TestDriveTrain(driveTrain.get()));
         }
-
         if (elevator.isPresent())
         {
             group.addCommands(new TestElevator(elevator.get()));

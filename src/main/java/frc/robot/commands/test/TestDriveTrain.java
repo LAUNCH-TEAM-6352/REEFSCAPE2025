@@ -18,16 +18,16 @@ public class TestDriveTrain extends SequentialCommandGroup
     {
         addCommands(
             new TestSwerveDriveModule(driveTrain, "backleft"),
-            new WaitCommand(TestConstants.inbetweenTimeSecs),
+            new WaitCommand(TestConstants.betweenTimeSecs),
 
             new TestSwerveDriveModule(driveTrain, "backright"),
-            new WaitCommand(TestConstants.inbetweenTimeSecs),
+            new WaitCommand(TestConstants.betweenTimeSecs),
 
             new TestSwerveDriveModule(driveTrain, "frontright"),
-            new WaitCommand(TestConstants.inbetweenTimeSecs),
+            new WaitCommand(TestConstants.betweenTimeSecs),
 
             new TestSwerveDriveModule(driveTrain, "frontleft"),
-            new WaitCommand(TestConstants.inbetweenTimeSecs)
+            new WaitCommand(TestConstants.betweenTimeSecs)
         );
     }
 }

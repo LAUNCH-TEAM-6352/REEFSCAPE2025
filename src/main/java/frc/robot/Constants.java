@@ -35,7 +35,7 @@ public final class Constants
         public static final boolean isRollerMotorInverted = true; 
 
         public static final double storedPivotPosition = pivotMotorMinPosition;
-        public static final double activePivotPosition = 45;
+        public static final double activePivotPosition = 39;
 
         public static final class PIDConstants
         {
@@ -48,6 +48,11 @@ public final class Constants
             public static final double maxOutput = 0.25;
             public static final double tolerance = 0.5;
         }
+    }
+
+    public static class AutoConstants
+    {
+        public static final double elevatorMoveTimeSecs = 4.0;
     }
 
     public static class ClimberConstants
@@ -69,7 +74,6 @@ public final class Constants
             public static final double positionConversionFactor = 1; // One position per rotation
             public static final double velocityConversionFactor = 1; // Rotations per minute
         }
-
     }
 
     public enum CoralLevel
@@ -187,6 +191,7 @@ public final class Constants
         public static final double minPosition = 0;
         public static final double maxPosition = 53;
 
+        public static final double presetTimeoutSecs = 2.0;
 
         public static final class AlternateEncoderConstants
         {
@@ -198,13 +203,13 @@ public final class Constants
 
         public static final class PIDConstants
         {
-            public static final double kP = 0.15;
+            public static final double kP = 0.1; // Elevator slams down if increased
             public static final double kI = 0.0;
             public static final double kD = 0.0;
             public static final int kIZ = 0;
             public static final double kFF = 0;
-            public static final double minOutput = -0.3;
-            public static final double maxOutput = 0.4;
+            public static final double minOutput = -0.5;
+            public static final double maxOutput = 0.7;
             public static final double tolerance = 0.5;
         }
     }
@@ -235,8 +240,8 @@ public final class Constants
 
     public static class TestConstants
     {
-        public static final double inbetweenTimeSecs = 1.0;
-        public static final double instantInBetweenSecs = 4.0;
+        public static final double betweenTimeSecs = 1.0;
+        public static final double instantBetweenTimeSecs = 3.0;
 
         public static final double swerveModuleMotorTimeoutSecs = 5;
         public static final double swerveModuleDriveForwardPercentOutput = 0.25;

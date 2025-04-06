@@ -21,11 +21,11 @@ public class TestClimber extends SequentialCommandGroup
         addCommands(
             new InstantCommand(() -> System.out.println("Testing Climber Ratchet: Releasing")),
             new InstantCommand(() -> climber.toggleRatchet()),
-            new WaitCommand(TestConstants.instantInBetweenSecs),
+            new WaitCommand(TestConstants.instantBetweenTimeSecs),
 
             new InstantCommand(() -> System.out.println("Testing Climber Ratchet: Engaging")),
             new InstantCommand(() -> climber.toggleRatchet()),
-            new WaitCommand(TestConstants.instantInBetweenSecs)
+            new WaitCommand(TestConstants.instantBetweenTimeSecs)
         );
     }
 }

@@ -22,11 +22,11 @@ public class TestAlgaeManipulator extends SequentialCommandGroup
         addCommands(
             new InstantCommand(() -> System.out.println("Testing Algae Manipulator: Lowering")),
             new InstantCommand(() -> algaeManipulator.togglePivotPosition()),
-            new WaitCommand(TestConstants.instantInBetweenSecs),
+            new WaitCommand(TestConstants.instantBetweenTimeSecs),
 
             new InstantCommand(() -> System.out.println("Testing Algae Manipulator: Raising")),
             new InstantCommand(() -> algaeManipulator.togglePivotPosition()),
-            new WaitCommand(TestConstants.instantInBetweenSecs)
+            new WaitCommand(TestConstants.instantBetweenTimeSecs)
         );
     }
 }

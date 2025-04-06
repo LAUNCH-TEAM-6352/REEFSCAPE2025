@@ -16,6 +16,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
@@ -33,6 +34,7 @@ public class Elevator extends SubsystemBase
     private boolean atTargetPosition;
     private boolean isPositioningStarted;
     private double lastPosition;
+    private double setPositioningStartTime;
 
     private final SparkMax leftMotor = new SparkMax(ElevatorConstants.leftMotorChannel,
         MotorType.kBrushless);
@@ -102,7 +104,7 @@ public class Elevator extends SubsystemBase
         return leaderMotor.getAlternateEncoder().getPosition();
     }
 
-    private void resetPosition()
+    public void resetPosition()
     {
         leaderMotor.getAlternateEncoder().setPosition(0);
     }
@@ -124,6 +126,7 @@ public class Elevator extends SubsystemBase
         leaderMotor.getClosedLoopController().setReference(targetPosition, ControlType.kPosition);
         atTargetPosition = false;
         isPositioningStarted = true;
+        setPositioningStartTime = RobotController.getFPGATime();
     }
 
     public boolean atTargetPosition()
@@ -149,6 +152,8 @@ public class Elevator extends SubsystemBase
             {
                 atTargetPosition = true;
                 isPositioningStarted = false;
+                double positioningTimeSecs = (RobotController.getFPGATime() - setPositioningStartTime) / 1e6;
+                SmartDashboard.putNumber("Elev Pos Time", positioningTimeSecs);
             }
             else
             {
