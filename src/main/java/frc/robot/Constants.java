@@ -191,6 +191,7 @@ public final class Constants
         public static final double minPosition = 0;
         public static final double maxPosition = 53;
 
+        public static final double presetTimeoutSecs = 2.0;
 
         public static final class AlternateEncoderConstants
         {
