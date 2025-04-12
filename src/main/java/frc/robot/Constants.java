@@ -203,13 +203,13 @@ public final class Constants
 
         public static final class PIDConstants
         {
-            public static final double kP = 0.1; // Elevator slams down if increased
+            public static final double kP = 0.13; // Elevator lowers safely at this speed
             public static final double kI = 0.0;
             public static final double kD = 0.0;
             public static final int kIZ = 0;
             public static final double kFF = 0;
-            public static final double minOutput = -0.5;
-            public static final double maxOutput = 0.7;
+            public static final double minOutput = -0.4;
+            public static final double maxOutput = 0.5;
             public static final double tolerance = 0.5;
         }
     }
