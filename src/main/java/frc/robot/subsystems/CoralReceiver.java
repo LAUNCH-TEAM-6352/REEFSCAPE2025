@@ -36,21 +36,30 @@ public class CoralReceiver extends SubsystemBase
     /** Creates a new CoralReciever. */
     public CoralReceiver()
     {
-        ClosedLoopConfig closedLoopConfig = new ClosedLoopConfig()
-            .pidf(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD, PIDConstants.kFF)
-            .iZone(PIDConstants.kIZ)
-            .outputRange(PIDConstants.minOutput, PIDConstants.maxOutput);
+        // ClosedLoopConfig closedLoopConfig = new ClosedLoopConfig()
+        //     .pidf(PIDConstants.kP, PIDConstants.kI, PIDConstants.kD, PIDConstants.kFF)
+        //     .iZone(PIDConstants.kIZ)
+        //     .outputRange(PIDConstants.minOutput, PIDConstants.maxOutput);
 
-        SparkMaxConfig config = new SparkMaxConfig();
-        config
-            .apply(closedLoopConfig)
-            .idleMode(CoralReceiverConstants.motorIdleMode)
-            .inverted(CoralReceiverConstants.isMotorInverted);
-        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        motor.clearFaults();
+        // SparkMaxConfig config = new SparkMaxConfig();
+        // config
+        //     .apply(closedLoopConfig)
+        //     .idleMode(CoralReceiverConstants.motorIdleMode)
+        //     .inverted(CoralReceiverConstants.isMotorInverted);
+        // motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        // motor.clearFaults();
 
-        resetPosition();
-        currentPosition = CoralReceiverConstants.minPosition;
+        // resetPosition();
+        // currentPosition = CoralReceiverConstants.minPosition;
+    }
+
+    public void setMotorSpeed(double speed)
+    {
+        motor.set(speed);
+    }
+    public void stopMotor()
+    {
+        motor.stopMotor();
     }
 
     public double getPosition()
