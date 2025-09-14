@@ -9,11 +9,8 @@ import java.util.HashMap;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.CoralLevel;
 import frc.robot.Constants.CoralReceiverConstants.ReceiverPosition;
-import frc.robot.Constants.ElevatorConstants.PIDConstants;
 import frc.robot.subsystems.CoralReceiver;
-import frc.robot.subsystems.Elevator;
 
 /**
  * A command that moves the elevator to a pre-defined position based upon gamepad input.
@@ -73,9 +70,16 @@ public class MoveCoralReceiver extends Command
     public void end(boolean interrupted)
     {
         coralReceiver.stopMotor();
-        if (targetReceiverPosition == ReceiverPosition.Down)
+        switch (targetReceiverPosition)
         {
-            coralReceiver.resetPosition();
+            case Current:
+                break;
+            case Down:
+                coralReceiver.setDownPosition();
+                break;
+            case Up:
+                coralReceiver.setUpPosition();
+                break;
         }
     }
 

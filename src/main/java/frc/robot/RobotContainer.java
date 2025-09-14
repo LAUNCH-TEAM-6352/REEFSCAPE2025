@@ -255,6 +255,7 @@ public class RobotContainer
         }
 
         commandCodriverGamepad.leftTrigger()
+            // .onTrue(new InstantCommand(() -> coralReceiver.move()));
             .onTrue(new MoveCoralReceiver(coralReceiver, codriverGamepad).withTimeout(CoralReceiverConstants.positionTimeoutSecs));
     }
 

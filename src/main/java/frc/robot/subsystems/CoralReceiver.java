@@ -50,8 +50,7 @@ public class CoralReceiver extends SubsystemBase
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         motor.clearFaults();
 
-        resetPosition();
-        currentPosition = CoralReceiverConstants.minPosition;
+        setDownPosition();
     }
 
     public void setMotorSpeed(double speed)
@@ -69,9 +68,18 @@ public class CoralReceiver extends SubsystemBase
         return motor.getEncoder().getPosition();
     }
 
-    public void resetPosition()
+    /** Calibrates the encoder to the down poosition. */
+    public void setDownPosition()
     {
-        motor.getEncoder().setPosition(0);
+        currentPosition = CoralReceiverConstants.minPosition;
+        motor.getEncoder().setPosition(currentPosition);
+    }
+
+    /** Calibrates the encoder to the up poosition. */
+    public void setUpPosition()
+    {
+        currentPosition = CoralReceiverConstants.maxPosition;
+        motor.getEncoder().setPosition(currentPosition);
     }
 
     public void move()
