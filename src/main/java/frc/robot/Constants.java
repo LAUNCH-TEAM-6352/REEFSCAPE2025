@@ -119,6 +119,7 @@ public final class Constants
         public static final int motorChannel = 48;
         public static final IdleMode motorIdleMode = IdleMode.kBrake;
         public static final boolean isMotorInverted = false;
+        public static final int motorCurrentLimit = 5;
         public static final double maxPosition = 13.5;
         public static final double minPosition = 0;
         public static final double defaultUpSpeed = 0.08;

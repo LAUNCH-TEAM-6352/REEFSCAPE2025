@@ -23,6 +23,7 @@ public class MoveCoralReceiver extends Command
     private final CoralReceiver coralReceiver;
     private final XboxController gamepad;
     private double motorSpeed;
+    private ReceiverPosition targetReceiverPosition;
 
     // Maps from gamepad D-pad values to coral levels.
     // Note the handling of intermediate "headings" assume intended elevator level.
@@ -54,10 +55,10 @@ public class MoveCoralReceiver extends Command
     @Override
     public void initialize()
     {
-       var targetReceiverPosition = receiverPositions.get(gamepad.getPOV());
+        targetReceiverPosition = receiverPositions.get(gamepad.getPOV());
         motorSpeed = targetReceiverPosition == ReceiverPosition.Current
             ? 0
-             : SmartDashboard.getNumber(targetReceiverPosition.receiverPositionKey(), 0);
+            : SmartDashboard.getNumber(targetReceiverPosition.receiverPositionKey(), 0);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -72,6 +73,10 @@ public class MoveCoralReceiver extends Command
     public void end(boolean interrupted)
     {
         coralReceiver.stopMotor();
+        if (targetReceiverPosition == ReceiverPosition.Down)
+        {
+            coralReceiver.resetPosition();
+        }
     }
 
     // Returns true when the command should end.
