@@ -254,8 +254,12 @@ public class RobotContainer
             return;
         }
 
-        commandCodriverGamepad.leftTrigger()
-            // .onTrue(new InstantCommand(() -> coralReceiver.move()));
+        // Intended for normal move to toggle the receiver tray position:
+        commandCodriverGamepad.leftTrigger().and(() -> codriverGamepad.getPOV() == -1)
+            .onTrue(new InstantCommand(() -> coralReceiver.move()));
+
+        // Intended to re-calibrate the receiver tray postion:
+        commandCodriverGamepad.leftTrigger().and(() -> codriverGamepad.getPOV() != -1)
             .onTrue(new MoveCoralReceiver(coralReceiver, codriverGamepad).withTimeout(CoralReceiverConstants.positionTimeoutSecs));
     }
 

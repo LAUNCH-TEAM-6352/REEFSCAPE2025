@@ -82,6 +82,9 @@ public class CoralReceiver extends SubsystemBase
         motor.getEncoder().setPosition(currentPosition);
     }
 
+    /**
+     * Moves the receiver tray to the opposite position (up if down, down if up).
+     */
     public void move()
     {
         targetTolerance = CoralReceiverConstants.PIDConstants.tolerance;
@@ -106,6 +109,7 @@ public class CoralReceiver extends SubsystemBase
 
         // This method will be called once per scheduler run
         SmartDashboard.putNumber("Receiver Pos", position);
+        SmartDashboard.putNumber("Receiver Amps", motor.getOutputCurrent());
 
         if (isPositioningStarted)
         {
