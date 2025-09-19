@@ -46,7 +46,7 @@ public class CoralReceiver extends SubsystemBase
             .apply(closedLoopConfig)
             .idleMode(CoralReceiverConstants.motorIdleMode)
             .inverted(CoralReceiverConstants.isMotorInverted)
-            .smartCurrentLimit(CoralReceiverConstants.motorCurrentLimit);
+            .smartCurrentLimit(CoralReceiverConstants.motorCurrentLimit, 0);
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         motor.clearFaults();
 
@@ -110,6 +110,7 @@ public class CoralReceiver extends SubsystemBase
         // This method will be called once per scheduler run
         SmartDashboard.putNumber("Receiver Pos", position);
         SmartDashboard.putNumber("Receiver Amps", motor.getOutputCurrent());
+        SmartDashboard.putNumber("Receiver Rpm", motor.getEncoder().getVelocity());
 
         if (isPositioningStarted)
         {
