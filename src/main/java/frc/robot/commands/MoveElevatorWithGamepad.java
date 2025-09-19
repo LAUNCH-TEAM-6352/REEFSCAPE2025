@@ -38,8 +38,8 @@ public class MoveElevatorWithGamepad extends Command
     {
         var speed = -gamepad.getLeftY() * ElevatorConstants.maxManualMotorSpeed;
         var position = elevator.getPosition();
-        if ((speed < 0 && position <= ElevatorConstants.minPosition) ||
-            (speed > 0 && position >= ElevatorConstants.maxPosition))
+        if ((speed < 0 && position <= ElevatorConstants.minPosition && !gamepad.getYButton()) ||
+            (speed > 0 && position >= ElevatorConstants.maxPosition)) 
         {
             speed = 0;
             gamepad.setRumble(RumbleType.kBothRumble, 1);

@@ -45,12 +45,22 @@ public class CoralReceiver extends SubsystemBase
         config
             .apply(closedLoopConfig)
             .idleMode(CoralReceiverConstants.motorIdleMode)
-            .inverted(CoralReceiverConstants.isMotorInverted);
+            .inverted(CoralReceiverConstants.isMotorInverted)
+            .smartCurrentLimit(CoralReceiverConstants.motorCurrentLimit, 0);
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         motor.clearFaults();
 
-        resetPosition();
-        currentPosition = CoralReceiverConstants.minPosition;
+        setDownPosition();
+    }
+
+    public void setMotorSpeed(double speed)
+    {
+        motor.set(speed);
+    }
+
+    public void stopMotor()
+    {
+        motor.stopMotor();
     }
 
     public double getPosition()
@@ -58,11 +68,23 @@ public class CoralReceiver extends SubsystemBase
         return motor.getEncoder().getPosition();
     }
 
-    private void resetPosition()
+    /** Calibrates the encoder to the down poosition. */
+    public void setDownPosition()
     {
-        motor.getEncoder().setPosition(0);
+        currentPosition = CoralReceiverConstants.minPosition;
+        motor.getEncoder().setPosition(currentPosition);
     }
 
+    /** Calibrates the encoder to the up poosition. */
+    public void setUpPosition()
+    {
+        currentPosition = CoralReceiverConstants.maxPosition;
+        motor.getEncoder().setPosition(currentPosition);
+    }
+
+    /**
+     * Moves the receiver tray to the opposite position (up if down, down if up).
+     */
     public void move()
     {
         targetTolerance = CoralReceiverConstants.PIDConstants.tolerance;
@@ -82,12 +104,13 @@ public class CoralReceiver extends SubsystemBase
 
     @Override
     public void periodic()
-
     {
         var position = getPosition();
 
         // This method will be called once per scheduler run
         SmartDashboard.putNumber("Receiver Pos", position);
+        SmartDashboard.putNumber("Receiver Amps", motor.getOutputCurrent());
+        SmartDashboard.putNumber("Receiver Rpm", motor.getEncoder().getVelocity());
 
         if (isPositioningStarted)
         {

@@ -80,7 +80,7 @@ public class Elevator extends SubsystemBase
                 config.inverted(isLeaderMotorInverted);
                 config
                     .apply(encoderConfig)
-                    .apply(softLimitConfig)
+                    //.apply(softLimitConfig)
                     .apply(closedLoopConfig);
             }
             else

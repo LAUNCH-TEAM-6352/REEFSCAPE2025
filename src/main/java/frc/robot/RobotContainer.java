@@ -24,8 +24,10 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.CoralLevel;
 import frc.robot.Constants.CoralManipulatorConstants;
+import frc.robot.Constants.CoralReceiverConstants;
 import frc.robot.Constants.DashboardConstants.ClimberKeys;
 import frc.robot.Constants.DashboardConstants.CoralManipulatorKeys;
+import frc.robot.Constants.DashboardConstants.CoralReceiverKeys;
 import frc.robot.Constants.DashboardConstants.DriveKeys;
 import frc.robot.Constants.DashboardConstants.ElevatorKeys;
 import frc.robot.Constants.DriveConstants;
@@ -35,6 +37,7 @@ import frc.robot.commands.Climb;
 import frc.robot.commands.DriveWithGamepad;
 import frc.robot.commands.DriveWithJoystick;
 import frc.robot.commands.MoveAlgaeManipulatorWithGamepad;
+import frc.robot.commands.MoveCoralReceiver;
 import frc.robot.commands.MoveElevatorToCoralPosition;
 import frc.robot.commands.MoveElevatorWithGamepad;
 import frc.robot.commands.test.TestAlgaeManipulator;
@@ -251,9 +254,13 @@ public class RobotContainer
             return;
         }
 
-        commandCodriverGamepad.leftTrigger()
+        // Intended for normal move to toggle the receiver tray position:
+        commandCodriverGamepad.leftTrigger().and(() -> codriverGamepad.getPOV() == -1)
             .onTrue(new InstantCommand(() -> coralReceiver.move()));
 
+        // Intended to re-calibrate the receiver tray postion:
+        commandCodriverGamepad.leftTrigger().and(() -> codriverGamepad.getPOV() != -1)
+            .onTrue(new MoveCoralReceiver(coralReceiver, codriverGamepad).withTimeout(CoralReceiverConstants.positionTimeoutSecs));
     }
 
     private void configureBindings(Elevator elevator)
@@ -267,12 +274,16 @@ public class RobotContainer
 
         commandCodriverGamepad.a()
             .onTrue(new MoveElevatorToCoralPosition(elevator, codriverGamepad, ElevatorKeys.toleranceKey).withTimeout(ElevatorConstants.presetTimeoutSecs));
-    }
+   
+        commandCodriverGamepad.y()
+            .onFalse(new InstantCommand(() -> elevator.resetPosition(), elevator));
+        }
 
     private void configureSmartDashboard()
     {
         climber.ifPresent(this::configureSmartDashboard);
         coralManipulator.ifPresent(this::configureSmartDashboard);
+        coralReceiver.ifPresent(this::configureSmartDashboard);
         driveTrain.ifPresent(this::configureSmartDashboard);
         elevator.ifPresent(this::configureSmartDashboard);
 
@@ -302,6 +313,12 @@ public class RobotContainer
             CoralManipulatorConstants.leftRollerMotorL1EjectSpeed);
         SmartDashboard.putNumber(CoralManipulatorKeys.rightRollerMotorL1EjectSpeedKey,
             CoralManipulatorConstants.rightRollerMotorL1EjectSpeed);
+    }
+
+    private void configureSmartDashboard(CoralReceiver coralReceiver)
+    {
+        SmartDashboard.putNumber(CoralReceiverKeys.downSpeedKey, CoralReceiverConstants.defaultDownSpeed);
+        SmartDashboard.putNumber(CoralReceiverKeys.upSpeedKey, CoralReceiverConstants.defaultUpSpeed);
     }
 
     private void configureSmartDashboard(DriveTrain driveTrain)

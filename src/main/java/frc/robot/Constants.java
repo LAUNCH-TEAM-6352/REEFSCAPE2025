@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.pathplanner.lib.config.PIDConstants;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 /**
@@ -32,7 +31,7 @@ public final class Constants
         public static final double rollerMotorIntakeSpeed = .5;
         public static final double rollerMotorEjectSpeed = -.5;
         public static final IdleMode rollerMotorIdleMode = IdleMode.kBrake;
-        public static final boolean isRollerMotorInverted = true; 
+        public static final boolean isRollerMotorInverted = true;
 
         public static final double storedPivotPosition = pivotMotorMinPosition;
         public static final double activePivotPosition = 39;
@@ -78,11 +77,7 @@ public final class Constants
 
     public enum CoralLevel
     {
-        Intake(0.0),
-        Reef1(10.0),
-        Reef2(18.7),
-        Reef3(34.0),
-        Reef4(53.0);
+        Intake(0.0), Reef1(10.0), Reef2(18.7), Reef3(34.0), Reef4(53.0);
 
         private final double elevatorPosition;
 
@@ -124,8 +119,12 @@ public final class Constants
         public static final int motorChannel = 48;
         public static final IdleMode motorIdleMode = IdleMode.kBrake;
         public static final boolean isMotorInverted = false;
-        public static final double maxPosition = 13.5;
+        public static final int motorCurrentLimit = 2;
+        public static final double maxPosition = 15.4;
         public static final double minPosition = 0;
+        public static final double defaultUpSpeed = 0.08;
+        public static final double defaultDownSpeed = -0.08;
+        public static final double positionTimeoutSecs = 2.0;
 
         public static final class PIDConstants
         {
@@ -138,7 +137,26 @@ public final class Constants
             public static final double maxOutput = 0.08;
             public static final double tolerance = 5;
         }
+
+        public enum ReceiverPosition
+        {
+            Up(DashboardConstants.CoralReceiverKeys.upSpeedKey),
+            Down(DashboardConstants.CoralReceiverKeys.downSpeedKey),
+            Current(null); 
+            
+            private final String receiverPositionKey;
+            ReceiverPosition(String receiverPositionKey)
+            {
+                this.receiverPositionKey = receiverPositionKey;
+            }
+        
+            public String receiverPositionKey()
+            {
+                return receiverPositionKey;
+            }
+        }
     }
+
 
     public static final class DashboardConstants
     {
@@ -156,6 +174,12 @@ public final class Constants
             public static final String rightRollerMotorL1EjectSpeedKey = "L1 Right Coral Ejct Spd";
             public static final String opticalSensorVoltageThresholdKey = "Optical Sensor";
             public static final String extraTimeSecsKey = "Extra Time";
+        }
+
+        public static final class CoralReceiverKeys
+        {
+            public static final String upSpeedKey = "Rcvr Up Spd";
+            public static final String downSpeedKey = "Rcvr Down Spd";
         }
 
         public static final class DriveKeys
